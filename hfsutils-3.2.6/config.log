@@ -1,0 +1,28 @@
+This file contains any messages produced by compilers while
+running configure, to aid debugging if configure makes a mistake.
+
+configure:597: checking whether make sets ${MAKE}
+configure:626: checking for gcc
+configure:703: checking whether the C compiler (gcc -arch i386 -arch ppc ) works
+configure:717: gcc -o conftest -arch i386 -arch ppc   conftest.c  1>&5
+configure:737: checking whether the C compiler (gcc -arch i386 -arch ppc ) is a cross-compiler
+configure:742: checking whether we are using GNU C
+configure:766: checking whether gcc accepts -g
+configure:804: checking for a BSD compatible install
+configure:856: checking for ranlib
+configure:884: checking how to run the C preprocessor
+configure:946: checking whether gcc needs -traditional
+configure:994: checking for ANSI C header files
+configure:1101: checking for unistd.h
+configure:1101: checking for fcntl.h
+configure:1101: checking for termios.h
+configure:1101: checking for sys/ioctl.h
+configure:1140: checking for uid_t in sys/types.h
+configure:1174: checking for size_t
+configure:1208: checking for working const
+configure:1287: checking for strdup
+configure:1287: checking for strerror
+configure:1287: checking for strstr
+configure:1287: checking for strtol
+configure:1344: checking for setreuid
+configure:1398: checking for sys_errlist
