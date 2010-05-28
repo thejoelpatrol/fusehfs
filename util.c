@@ -17,8 +17,6 @@
 #include <iconv.h>
 #include <sys/errno.h>
 
-static FILE * logf;
-
 int usage() {
 	fprintf(stderr, "usage: fusefs_hfs.util [-p|-m|-i] <options>\n");
 	return EXIT_FAILURE;
@@ -49,11 +47,11 @@ int initialize (const char *device, const char *label) {
 	size_t len = strlen(label);
 	size_t outleft = HFS_MAX_VLEN;
 	char *outp = volname;
-	iconv_t conv = libiconv_open("Macintosh", "UTF-8");
-	libiconv(conv, (char **restrict)&label, &len, &outp, &outleft);
+	iconv_t conv = iconv_open("Macintosh", "UTF-8");
+	iconv(conv, (char **restrict)&label, &len, &outp, &outleft);
 	volname[HFS_MAX_VLEN-outleft] = '\0';
 	volname[HFS_MAX_VLEN] = '\0';
-	libiconv_close(conv);
+	iconv_close(conv);
 	
 	// format
 	if (hfs_format(device, 0, 0, volname, 0, NULL)) {
@@ -97,6 +95,5 @@ int main (int argc, char * argv[], char * envp[], char * apple[]) {
 			ret = FSUR_INVAL;
 			break;
 	}
-	fclose(logf);
 	return ret;
 }

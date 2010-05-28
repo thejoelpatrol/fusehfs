@@ -77,7 +77,6 @@ static int FuseHFS_opt_proc(void *data, const char *arg, int key, struct fuse_ar
 	return 0;
 }
 
-FILE * logf;
 int main(int argc, char* argv[], char* envp[], char** exec_path) {
 	struct fuse_args args = FUSE_ARGS_INIT(argc, argv);
 	
@@ -86,12 +85,12 @@ int main(int argc, char* argv[], char* envp[], char** exec_path) {
 	if (options.encoding == NULL) options.encoding = strdup("Macintosh");
 	
 	// create iconv
-	iconv_to_utf8 = libiconv_open("UTF-8", options.encoding);
+	iconv_to_utf8 = iconv_open("UTF-8", options.encoding);
 	if (iconv_to_utf8 == (iconv_t)-1) {
 		perror("iconv_open");
 		exit(1);
 	}
-	iconv_to_mac = libiconv_open(options.encoding, "UTF-8");
+	iconv_to_mac = iconv_open(options.encoding, "UTF-8");
 	if (iconv_to_mac == (iconv_t)-1) {
 		perror("iconv_open");
 		exit(1);
@@ -140,8 +139,8 @@ int main(int argc, char* argv[], char* envp[], char** exec_path) {
 	
 	// all good things come to an end
 	hfs_umount(NULL);
-	libiconv_close(iconv_to_utf8);
-	libiconv_close(iconv_to_mac);
+	iconv_close(iconv_to_utf8);
+	iconv_close(iconv_to_mac);
 	free(options.path);
 	free(options.encoding);
 	fuse_opt_free_args(&args);

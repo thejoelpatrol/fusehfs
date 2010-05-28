@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		283BD8AC1149985C003F9F55 /* mount_fusefs_hfs in CopyFiles */ = {isa = PBXBuildFile; fileRef = 283BD8A6114997EB003F9F55 /* mount_fusefs_hfs */; };
+		2842B7D711AFC0100031D3AE /* libfuse_ino64.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2842B7D611AFC0100031D3AE /* libfuse_ino64.dylib */; };
 		2861C557113A706600D0447F /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2861C556113A706600D0447F /* libiconv.dylib */; };
 		286A10A411AF17D7001EEF69 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2861C556113A706600D0447F /* libiconv.dylib */; };
 		286A118211AF26C6001EEF69 /* bootblocks.h in Headers */ = {isa = PBXBuildFile; fileRef = 286A118111AF26C6001EEF69 /* bootblocks.h */; };
@@ -107,6 +108,7 @@
 
 /* Begin PBXFileReference section */
 		283BD8A6114997EB003F9F55 /* mount_fusefs_hfs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = mount_fusefs_hfs; sourceTree = "<group>"; };
+		2842B7D611AFC0100031D3AE /* libfuse_ino64.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libfuse_ino64.dylib; path = /usr/local/lib/libfuse_ino64.dylib; sourceTree = "<absolute>"; };
 		2861C556113A706600D0447F /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
 		286A118111AF26C6001EEF69 /* bootblocks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bootblocks.h; sourceTree = "<group>"; };
 		286A11A811AF2A91001EEF69 /* bootblocks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bootblocks.h; sourceTree = "<group>"; };
@@ -371,6 +373,7 @@
 			files = (
 				2861C557113A706600D0447F /* libiconv.dylib in Frameworks */,
 				289FB925113BE5CE00409A62 /* libhfs.a in Frameworks */,
+				2842B7D711AFC0100031D3AE /* libfuse_ino64.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -386,6 +389,7 @@
 				1AB674ADFE9D54B511CA2CBB /* Products */,
 				286A11C611AF2F21001EEF69 /* postinstall.sh */,
 				2861C556113A706600D0447F /* libiconv.dylib */,
+				2842B7D611AFC0100031D3AE /* libfuse_ino64.dylib */,
 			);
 			name = HFSLives;
 			sourceTree = "<group>";
@@ -982,21 +986,18 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				HEADER_SEARCH_PATHS = (
-					"$(SRCROOT)/hfsutils-3.2.6/",
 					/usr/local/include,
+					"$(SRCROOT)/hfsutils-3.2.6/",
 				);
 				INSTALL_PATH = /usr/local/bin;
-				LIBRARY_SEARCH_PATHS = (
-					/usr/local/lib,
-					"\"$(SRCROOT)/hfsutils-3.2.6/libhfs\"",
-				);
+				LIBRARY_SEARCH_PATHS = "\"$(SRCROOT)/hfsutils-3.2.6/libhfs\"";
 				OTHER_CFLAGS = (
 					"-D_FILE_OFFSET_BITS=64",
 					"-D__DARWIN_64_BIT_INO_T=1",
 					"-D__FreeBSD__=10",
 					"-DFUSE_USE_VERSION=26",
 				);
-				OTHER_LDFLAGS = "-lfuse_ino64";
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = fusefs_hfs;
 			};
 			name = Debug;
@@ -1008,21 +1009,18 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_MODEL_TUNING = G5;
 				HEADER_SEARCH_PATHS = (
-					"$(SRCROOT)/hfsutils-3.2.6/",
 					/usr/local/include,
+					"$(SRCROOT)/hfsutils-3.2.6/",
 				);
 				INSTALL_PATH = /usr/local/bin;
-				LIBRARY_SEARCH_PATHS = (
-					/usr/local/lib,
-					"\"$(SRCROOT)/hfsutils-3.2.6/libhfs\"",
-				);
+				LIBRARY_SEARCH_PATHS = "\"$(SRCROOT)/hfsutils-3.2.6/libhfs\"";
 				OTHER_CFLAGS = (
 					"-D_FILE_OFFSET_BITS=64",
 					"-D__DARWIN_64_BIT_INO_T=1",
 					"-D__FreeBSD__=10",
 					"-DFUSE_USE_VERSION=26",
 				);
-				OTHER_LDFLAGS = "-lfuse_ino64";
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = fusefs_hfs;
 			};
 			name = Release;

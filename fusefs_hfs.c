@@ -42,8 +42,8 @@ char * hfs_to_utf8 (const char * in, char * out, size_t outlen) {
         out = malloc(outlen);
     }
     outleft = outlen-1;
-    libiconv(iconv_to_utf8, (char **restrict)&in, &len, &outp, &outleft);
-    libiconv(iconv_to_utf8, NULL, NULL, NULL, NULL);
+    iconv(iconv_to_utf8, (char **restrict)&in, &len, &outp, &outleft);
+    iconv(iconv_to_utf8, NULL, NULL, NULL, NULL);
     out[outlen-outleft-1] = '\0';
     
     // swap / and :
@@ -61,8 +61,8 @@ char * utf8_to_hfs (const char * in) {
     outlen = len+1;
     char * out = malloc(outlen);
     char * outp = out;
-    libiconv(iconv_to_mac, (char **restrict)&in, &len, &outp, &outleft);
-    libiconv(iconv_to_mac, NULL, NULL, NULL, NULL);
+    iconv(iconv_to_mac, (char **restrict)&in, &len, &outp, &outleft);
+    iconv(iconv_to_mac, NULL, NULL, NULL, NULL);
     out[outlen-outleft-1] = '\0';
     
     // swap / and :
@@ -85,8 +85,8 @@ char * mkhfspath(const char *in) {
 	// prepend volume name
 	strcpy(out, _volname);
 	// convert path
-    libiconv(iconv_to_mac, (char **restrict)&in, &len, &outp, &outleft);
-    libiconv(iconv_to_mac, NULL, NULL, NULL, NULL);
+    iconv(iconv_to_mac, (char **restrict)&in, &len, &outp, &outleft);
+    iconv(iconv_to_mac, NULL, NULL, NULL, NULL);
     out[outlen-outleft-1] = '\0';
     
     // swap / and :
