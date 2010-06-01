@@ -21,6 +21,7 @@
 #include <assert.h>
 #include <libkern/OSByteOrder.h>
 #include <sys/xattr.h>
+#include "fusefs_hfs.h"
 
 #ifdef DEBUG
 #define dprintf(args...) fprintf(stderr, args)
@@ -31,6 +32,7 @@
 // globals
 iconv_t iconv_to_utf8, iconv_to_mac;
 char _volname[HFS_MAX_VLEN+1];
+int _readonly;
 
 #pragma mark Character set conversion
 char * hfs_to_utf8 (const char * in, char * out, size_t outlen) {
@@ -194,6 +196,8 @@ static int FuseHFS_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 
 static int FuseHFS_mknod(const char *path, mode_t mode, dev_t rdev) {
 	dprintf("mknod %s\n", path);
+	if (_readonly) return -EPERM;
+	
 	// convert to hfs path
 	char *hfspath = mkhfspath(path);
 	if (hfspath == NULL) return -ENOENT;
@@ -215,6 +219,7 @@ static int FuseHFS_mknod(const char *path, mode_t mode, dev_t rdev) {
 
 static int FuseHFS_mkdir(const char *path, mode_t mode) {
 	dprintf("mkdir %s\n", path);
+	if (_readonly) return -EPERM;
 	
 	// convert to hfs path
 	char *hfspath = mkhfspath(path);
@@ -232,6 +237,7 @@ static int FuseHFS_mkdir(const char *path, mode_t mode) {
 
 static int FuseHFS_unlink(const char *path) {
 	dprintf("unlink %s\n", path);
+	if (_readonly) return -EPERM;
 	
 	// convert to hfs path
 	char *hfspath = mkhfspath(path);
@@ -265,6 +271,7 @@ static int FuseHFS_unlink(const char *path) {
 
 static int FuseHFS_rmdir(const char *path) {
 	dprintf("rmdir %s\n", path);
+	if (_readonly) return -EPERM;
 	
 	// convert to hfs path
 	char *hfspath = mkhfspath(path);
@@ -298,6 +305,7 @@ static int FuseHFS_rmdir(const char *path) {
 
 static int FuseHFS_rename(const char *from, const char *to) {
 	dprintf("rename %s %s\n", from, to);
+	if (_readonly) return -EPERM;
 	
 	// convert to hfs paths
 	char *hfspath1 = mkhfspath(from);
@@ -325,6 +333,8 @@ static int FuseHFS_rename(const char *from, const char *to) {
 
 static int FuseHFS_create(const char *path, mode_t mode, struct fuse_file_info *fi) {
 	dprintf("create %s\n", path);
+	if (_readonly) return -EPERM;
+	
 	// convert to hfs path
 	char *hfspath = mkhfspath(path);
 	if (hfspath == NULL) return -ENOENT;
@@ -380,6 +390,7 @@ static int FuseHFS_read(const char *path, char *buf, size_t size, off_t offset,
 static int FuseHFS_write(const char *path, const char *buf, size_t size,
                off_t offset, struct fuse_file_info *fi) {
 	dprintf("write %s\n", path);
+	if (_readonly) return -EPERM;
 	
 	hfsfile *file = (hfsfile*)fi->fh;
 	hfs_setfork(file, 0);
@@ -421,15 +432,13 @@ static int FuseHFS_release(const char *path, struct fuse_file_info *fi) {
 }
 
 void * FuseHFS_init(struct fuse_conn_info *conn) {
-#if (__FreeBSD__ >= 10)
-	FUSE_ENABLE_SETVOLNAME(conn);
-	FUSE_ENABLE_XTIMES(conn);
-#endif
+	struct fuse_context *cntx=fuse_get_context();
+	struct fusehfs_options *options = cntx->private_data;
 	
-	// initialize some globals
-	hfsvolent vstat;
-	hfs_vstat(NULL, &vstat);
-	strcpy(_volname, vstat.name);
+#if (__FreeBSD__ >= 10)
+	FUSE_ENABLE_SETVOLNAME(conn); // this actually doesn't do anything
+	FUSE_ENABLE_XTIMES(conn); // and apparently this doesn't either
+#endif
 	
 	// make log
 #ifdef DEBUG
@@ -440,11 +449,37 @@ void * FuseHFS_init(struct fuse_conn_info *conn) {
 	fflush(stderr);
 #endif
 	
+	// create iconv
+	iconv_to_utf8 = iconv_open("UTF-8", options->encoding);
+	if (iconv_to_utf8 == (iconv_t)-1) {
+		perror("iconv_open");
+		exit(1);
+	}
+	iconv_to_mac = iconv_open(options->encoding, "UTF-8");
+	if (iconv_to_mac == (iconv_t)-1) {
+		perror("iconv_open");
+		exit(1);
+	}
+	
+	// mount volume
+	int mode = options->readonly?HFS_MODE_RDONLY:HFS_MODE_ANY;
+	if (NULL == hfs_mount(options->path, 0, mode)) {
+		perror("hfs_mount");
+		exit(1);
+	}
+	
+	// initialize some globals
+	_readonly = options->readonly;
+	hfsvolent vstat;
+	hfs_vstat(NULL, &vstat);
+	strcpy(_volname, vstat.name);
+	
 	return NULL;
 }
 
 void FuseHFS_destroy(void *userdata) {
-	
+	iconv_close(iconv_to_mac);
+	iconv_close(iconv_to_utf8);
 }
 
 static int FuseHFS_listxattr(const char *path, char *list, size_t size) {
@@ -567,6 +602,7 @@ static int FuseHFS_getxattr(const char *path, const char *name, char *value, siz
 static int FuseHFS_setxattr(const char *path, const char *name, const char *value,
 				  size_t size, int flags, uint32_t position) {
 	dprintf("setxattr %s %s %p %lu %02x %u\n", path, name, value, size, flags, position);
+	if (_readonly) return -EPERM;
 	
 	// convert to hfs path
 	char *hfspath = mkhfspath(path);
@@ -657,6 +693,7 @@ static int FuseHFS_setxattr(const char *path, const char *name, const char *valu
 
 static int FuseHFS_removexattr(const char *path, const char *name) {
 	dprintf("removexattr %s %s\n", path, name);
+	if (_readonly) return -EPERM;
 	
 	// convert to hfs path
 	char *hfspath = mkhfspath(path);
@@ -690,6 +727,7 @@ static int FuseHFS_removexattr(const char *path, const char *name) {
 
 static int FuseHFS_chmod (const char *path, mode_t newmod) {
 	dprintf("chmod %s %o\n", path, newmod);
+	if (_readonly) return -EPERM;
 	
 	// convert to hfs path
 	char *hfspath = mkhfspath(path);
@@ -708,6 +746,7 @@ static int FuseHFS_chmod (const char *path, mode_t newmod) {
 
 static int FuseHFS_chown (const char *path, uid_t newuid, gid_t newgid) {
 	dprintf("chown %s %d %d\n", path, newuid, newgid);
+	if (_readonly) return -EPERM;
 	
 	// convert to hfs path
 	char *hfspath = mkhfspath(path);
@@ -727,6 +766,7 @@ static int FuseHFS_chown (const char *path, uid_t newuid, gid_t newgid) {
 
 static int FuseHFS_ftruncate (const char *path, off_t length, struct fuse_file_info *fi) {
 	dprintf("ftruncate %s %lu\n", path, length);
+	if (_readonly) return -EPERM;
 	
 	hfsfile *file = (hfsfile*)fi->fh;
 	if (hfs_truncate(file, length) == -1) {
@@ -738,6 +778,7 @@ static int FuseHFS_ftruncate (const char *path, off_t length, struct fuse_file_i
 
 static int FuseHFS_truncate (const char *path, off_t length) {
 	dprintf("truncate %s %lu\n", path, length);
+	if (_readonly) return -EPERM;
 	
 	// convert to hfs path
 	char *hfspath = mkhfspath(path);
@@ -764,6 +805,8 @@ static int FuseHFS_utimens (const char *path, const struct timespec tv[2]) {
 
 static int FuseHFS_setvolname (const char *name) {
 	dprintf("setvolname %s\n", name);
+	if (_readonly) return -EPERM;
+	
 	// convert to hfs
 	char *hfsname = utf8_to_hfs(name);
 	if (strlen(hfsname) > HFS_MAX_VLEN) {
@@ -806,6 +849,7 @@ static int FuseHFS_getxtimes(const char *path, struct timespec *bkuptime,
 
 static int FuseHFS_setbkuptime (const char *path, const struct timespec *tv) {
 	dprintf("setbkuptime %s\n", path);
+	if (_readonly) return -EPERM;
 	
 	// convert to hfs path
 	char *hfspath = mkhfspath(path);
@@ -831,6 +875,7 @@ static int FuseHFS_setbkuptime (const char *path, const struct timespec *tv) {
 
 static int FuseHFS_setchgtime (const char *path, const struct timespec *tv) {
 	dprintf("setchgtime %s\n", path);
+	if (_readonly) return -EPERM;
 	
 	// convert to hfs path
 	char *hfspath = mkhfspath(path);
@@ -856,6 +901,7 @@ static int FuseHFS_setchgtime (const char *path, const struct timespec *tv) {
 
 static int FuseHFS_setcrtime (const char *path, const struct timespec *tv) {
 	dprintf("setcrtime %s\n", path);
+	if (_readonly) return -EPERM;
 	
 	// convert to hfs path
 	char *hfspath = mkhfspath(path);

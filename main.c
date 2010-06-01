@@ -7,31 +7,23 @@
  *
  */
 
-#include "fuse.h"
+#include <fuse.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <iconv.h>
 #include <libhfs/hfs.h>
+#include "fusefs_hfs.h"
 
 #define FUSEHFS_VERSION "0.1"
 
 extern struct fuse_operations FuseHFS_operations;
-extern iconv_t iconv_to_utf8, iconv_to_mac;
 
-static struct {
-    char    *path;
-    char	*encoding;
-	char	*mountpoint;
-	int		readonly;
-} options = {
+struct fusehfs_options options = {
     .path =         NULL,
     .encoding =		NULL,
 	.readonly =		0
 };
-
-char * hfs_to_utf8 (const char * in, char * out, size_t outlen);
-char * utf8_to_hfs (const char * in);
 
 enum {
 	KEY_VERSION,
@@ -77,24 +69,35 @@ static int FuseHFS_opt_proc(void *data, const char *arg, int key, struct fuse_ar
 	return 0;
 }
 
+char * iconv_convert(const char *src, const char *from, const char *to) {
+	size_t inb = strlen(src);
+	size_t outb = inb*4;
+	char *out = malloc(outb+1);
+	char *outp = out;
+	
+	// allocate conversion descriptor
+	iconv_t cd = iconv_open(from, to);
+	if (cd == (iconv_t)-1) return NULL;
+	
+	// convert
+	if (iconv(cd, (char **restrict)&src, &inb, &outp, &outb) == (size_t)-1) {
+		iconv_close(cd);
+		free(out);
+		return NULL;
+	}
+	*outp = '\0';
+	
+	// The End
+	iconv_close(cd);
+	return out;
+}
+
 int main(int argc, char* argv[], char* envp[], char** exec_path) {
 	struct fuse_args args = FUSE_ARGS_INIT(argc, argv);
 	
 	bzero(&options, sizeof options);
 	if (fuse_opt_parse(&args, NULL, FuseHFS_opts, FuseHFS_opt_proc)) return 1;
 	if (options.encoding == NULL) options.encoding = strdup("Macintosh");
-	
-	// create iconv
-	iconv_to_utf8 = iconv_open("UTF-8", options.encoding);
-	if (iconv_to_utf8 == (iconv_t)-1) {
-		perror("iconv_open");
-		exit(1);
-	}
-	iconv_to_mac = iconv_open(options.encoding, "UTF-8");
-	if (iconv_to_mac == (iconv_t)-1) {
-		perror("iconv_open");
-		exit(1);
-	}
 	
 	// mount volume
 	hfsvolent vstat;
@@ -107,19 +110,25 @@ int main(int argc, char* argv[], char* envp[], char** exec_path) {
 		perror("hfs_vstat");
 		return 1;
 	}
-	atexit(hfs_umountall);
 	
 	// is it read-only?
 	if (vstat.flags & HFS_ISLOCKED) {
 		printf("Mounting read only\n");
+		options.readonly = 1;
 		fuse_opt_add_arg(&args, "-oro");
 	}
 	fuse_opt_add_arg(&args, "-s");
+	hfs_umount(NULL);
 
 	// MacFUSE options
-#if defined(__APPLE__)
     char volnameOption[128] = "-ovolname=";
-    hfs_to_utf8(vstat.name, volnameOption+10, 118);
+	char *volname = iconv_convert(vstat.name, options.encoding, "UTF-8");
+	if (volname == NULL) {
+		perror("iconv");
+		return 1;
+	}
+    strcpy(volnameOption+10, volname);
+	free(volname);
     fuse_opt_add_arg(&args, volnameOption);
     fuse_opt_add_arg(&args, "-ofstypename=hfs");
     fuse_opt_add_arg(&args, "-olocal");
@@ -132,18 +141,12 @@ int main(int argc, char* argv[], char* envp[], char** exec_path) {
     strcat(fsnameOption, options.path);
     fuse_opt_add_arg(&args, fsnameOption);
     free(fsnameOption);
-#endif
 	
 	// run fuse
-	int ret = fuse_main(args.argc, args.argv, &FuseHFS_operations, NULL);
+	int ret = fuse_main(args.argc, args.argv, &FuseHFS_operations, &options);
 	
-	// all good things come to an end
-	hfs_umount(NULL);
-	iconv_close(iconv_to_utf8);
-	iconv_close(iconv_to_mac);
-	free(options.path);
-	free(options.encoding);
-	fuse_opt_free_args(&args);
-	printf("Goodbye!");
+	//free(options.path);
+	//free(options.encoding);
+	//fuse_opt_free_args(&args);
 	return ret;
 }

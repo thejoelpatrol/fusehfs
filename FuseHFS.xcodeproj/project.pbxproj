@@ -115,6 +115,7 @@
 		286A11C611AF2F21001EEF69 /* postinstall.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = postinstall.sh; sourceTree = "<group>"; };
 		289FB8D9113BE43300409A62 /* libhfs.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libhfs.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		289FB906113BE52700409A62 /* os.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = os.c; sourceTree = "<group>"; };
+		28B5BB7811B548D400FF8BC7 /* fusefs_hfs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fusefs_hfs.h; sourceTree = "<group>"; };
 		28E2E02111496478002DF364 /* fusefs_hfs.util */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = fusefs_hfs.util; sourceTree = BUILT_PRODUCTS_DIR; };
 		28E72DA91149551100084372 /* fusefs_hfs.fs */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = fusefs_hfs.fs; sourceTree = BUILT_PRODUCTS_DIR; };
 		28E72DAA1149551100084372 /* fusefs_hfs-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "fusefs_hfs-Info.plist"; sourceTree = "<group>"; };
@@ -398,6 +399,7 @@
 			isa = PBXGroup;
 			children = (
 				FFD708640EE669A60026C014 /* fusefs_hfs.c */,
+				28B5BB7811B548D400FF8BC7 /* fusefs_hfs.h */,
 				FFD708750EE66DA70026C014 /* main.c */,
 			);
 			name = Source;
