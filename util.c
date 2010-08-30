@@ -11,7 +11,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
-#include <libhfs/hfs.h>
+#include <libhfs/libhfs.h>
 #include <sys/loadable_fs.h>
 #include <sys/stat.h>
 #include <iconv.h>
@@ -27,18 +27,28 @@ int have_macfuse() {
 	return (stat("/usr/local/lib/libfuse_ino64.dylib", &us) == 0);
 }
 
+#define HFSPLUS_SIGWORD	0x482b /* 'H+' */
+#define HFSX_SIGWORD	0x482b /* 'HX' */
+
 int probe (const char *device, int removable, int readonly) {
 	char *path;
+	int ret = FSUR_RECOGNIZED;
 	asprintf(&path, "/dev/%s", device);
 	hfsvol * vol = hfs_mount(path, 0, HFS_MODE_RDONLY);
 	free(path);
 	if (vol == NULL) return FSUR_UNRECOGNIZED;
-	hfsvolent ent;
-	if (hfs_vstat(vol, &ent) == 0)
-		printf("%s\n", ent.name); // TODO: convert to UTF8
-	
+
+	/* Refuse to mount HFS+ wrapper volume */
+	int embed = vol->mdb.drEmbedSigWord;
+	if (embed == HFSPLUS_SIGWORD || embed == HFSX_SIGWORD) {
+		ret = FSUR_UNRECOGNIZED;
+	} else {
+		hfsvolent ent;
+		if (hfs_vstat(vol, &ent) == 0)
+			printf("%s\n", ent.name); // TODO: convert to UTF8
+	}
 	hfs_umount(vol);
-	return FSUR_RECOGNIZED;
+	return ret;
 }
 
 int initialize (const char *device, const char *label) {
