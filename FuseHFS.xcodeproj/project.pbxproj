@@ -13,7 +13,6 @@
 		286A10A411AF17D7001EEF69 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2861C556113A706600D0447F /* libiconv.dylib */; };
 		286A118211AF26C6001EEF69 /* bootblocks.h in Headers */ = {isa = PBXBuildFile; fileRef = 286A118111AF26C6001EEF69 /* bootblocks.h */; };
 		286A11A911AF2A91001EEF69 /* bootblocks.h in Headers */ = {isa = PBXBuildFile; fileRef = 286A11A811AF2A91001EEF69 /* bootblocks.h */; };
-		286A11C711AF2F21001EEF69 /* postinstall.sh in Resources */ = {isa = PBXBuildFile; fileRef = 286A11C611AF2F21001EEF69 /* postinstall.sh */; };
 		2883E887114974030057A7DC /* suid.c in Sources */ = {isa = PBXBuildFile; fileRef = 28F0DEF91139382300C3718A /* suid.c */; };
 		289FB8E2113BE47600409A62 /* block.c in Sources */ = {isa = PBXBuildFile; fileRef = 28F0DEB01139382300C3718A /* block.c */; };
 		289FB8E3113BE47600409A62 /* btree.c in Sources */ = {isa = PBXBuildFile; fileRef = 28F0DEB21139382300C3718A /* btree.c */; };
@@ -888,7 +887,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				28E2DF93114959B2002DF364 /* fusefs_hfs in Resources */,
-				286A11C711AF2F21001EEF69 /* postinstall.sh in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
