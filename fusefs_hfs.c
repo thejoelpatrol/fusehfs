@@ -317,18 +317,33 @@ static int FuseHFS_rename(const char *from, const char *to) {
 		if (!(ent.flags & HFS_ISDIR)) hfs_delete(NULL, hfspath2);
 	
 	// rename
-	if (hfs_rename(NULL, hfspath1, hfspath2) == 0) {
+	if (hfs_rename(NULL, hfspath1, hfspath2) != 0) {
 		free(hfspath1);
 		free(hfspath2);
-		return 0;
+		perror("hfs_rename");
+		return -errno;
 	}
 	
+	// bless parent folder if it's a system file
+	if (hfs_stat(NULL, hfspath2, &ent) == -1) {
+		free(hfspath1);
+		free(hfspath2);
+		return -ENOENT;
+	}
 	
-	// error
+	if ((strcmp(ent.u.file.type, "zsys") == 0) && (strcmp(ent.u.file.creator, "MACS") == 0) && (strcmp(ent.name, "System") == 0)) {
+		// bless
+		dprintf("rename: blessing folder %lu\n", ent.parid);
+		hfsvolent volent;
+		hfs_vstat(NULL, &volent);
+		volent.blessed = ent.parid;
+		hfs_vsetattr(NULL, &volent);
+	}
+	
+	// success
 	free(hfspath1);
 	free(hfspath2);
-	perror("hfs_rename");
-	return -errno;
+	return 0;
 }
 
 static int FuseHFS_create(const char *path, mode_t mode, struct fuse_file_info *fi) {
@@ -659,7 +674,7 @@ static int FuseHFS_setxattr(const char *path, const char *name, const char *valu
 			((FXInfo*)(ent.u.file.xinfo))->fdComment   = OSReadBigInt16(value, 26);
 			((FXInfo*)(ent.u.file.xinfo))->fdPutAway   = OSReadBigInt32(value, 28);
 			// bless parent folder if it's a system file
-			if ((strcmp(ent.u.file.type, "ZSYS") == 0) && (strcmp(ent.u.file.creator, "MACS") == 0) && (strcmp(ent.name, "System") == 0)) {
+			if ((strcmp(ent.u.file.type, "zsys") == 0) && (strcmp(ent.u.file.creator, "MACS") == 0) && (strcmp(ent.name, "System") == 0)) {
 				// bless
 				dprintf("setxattr: blessing folder %lu\n", ent.parid);
 				hfsvolent volent;
