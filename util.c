@@ -72,7 +72,7 @@ int initialize (const char *device, const char *label) {
 
 int mount (const char *device, const char *mountpoint) {
 	char *cmd;
-	asprintf(&cmd, "/System/Library/Filesystems/fusefs_hfs.fs/Contents/Resources/fusefs_hfs \"%s\" \"%s\"", device, mountpoint);
+	asprintf(&cmd, "/System/Library/Filesystems/fusefs_hfs.fs/Contents/Resources/fuse_wait \"%s\" %d /System/Library/Filesystems/fusefs_hfs.fs/Contents/Resources/fusefs_hfs \"%s\" \"%s\"", mountpoint, 5, device, mountpoint);
 	int ret = system(cmd);
 	free(cmd);
 	return ret?FSUR_IO_FAIL:FSUR_IO_SUCCESS;

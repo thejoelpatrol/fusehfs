@@ -27,4 +27,4 @@ fi
 shift
 done
 
-/System/Library/Filesystems/fusefs_hfs.fs/Contents/Resources/fusefs_hfs "${DEVICE_ARG}" "${MOUNTPOINT}"
+/System/Library/Filesystems/fusefs_hfs.fs/Contents/Resources/fuse_wait "${MOUNTPOINT}" 5 /System/Library/Filesystems/fusefs_hfs.fs/Contents/Resources/fusefs_hfs "${DEVICE_ARG}" "${MOUNTPOINT}"

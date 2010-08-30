@@ -478,8 +478,10 @@ void * FuseHFS_init(struct fuse_conn_info *conn) {
 }
 
 void FuseHFS_destroy(void *userdata) {
+	dprintf("FuseHFS_destroy\n");
 	iconv_close(iconv_to_mac);
 	iconv_close(iconv_to_utf8);
+	hfs_umountall();
 }
 
 static int FuseHFS_listxattr(const char *path, char *list, size_t size) {

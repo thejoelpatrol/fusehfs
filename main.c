@@ -15,7 +15,7 @@
 #include <libhfs/hfs.h>
 #include "fusefs_hfs.h"
 
-#define FUSEHFS_VERSION "0.1"
+#define FUSEHFS_VERSION "0.1.3"
 
 extern struct fuse_operations FuseHFS_operations;
 
@@ -113,7 +113,6 @@ int main(int argc, char* argv[], char* envp[], char** exec_path) {
 	
 	// is it read-only?
 	if (vstat.flags & HFS_ISLOCKED) {
-		printf("Mounting read only\n");
 		options.readonly = 1;
 		fuse_opt_add_arg(&args, "-oro");
 	}
@@ -135,7 +134,6 @@ int main(int argc, char* argv[], char* envp[], char** exec_path) {
 	//fuse_opt_add_arg(&args, "-oallow_root");
     fuse_opt_add_arg(&args, "-oallow_other");
 	fuse_opt_add_arg(&args, "-odefer_permissions");
-	fuse_opt_add_arg(&args, "-okill_on_unmount");
     char *fsnameOption = malloc(strlen(options.path)+10);
     strcpy(fsnameOption, "-ofsname=");
     strcat(fsnameOption, options.path);
