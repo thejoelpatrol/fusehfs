@@ -97,6 +97,7 @@ int main(int argc, char* argv[], char* envp[], char** exec_path) {
 	
 	bzero(&options, sizeof options);
 	if (fuse_opt_parse(&args, NULL, FuseHFS_opts, FuseHFS_opt_proc)) return 1;
+	options.mountpoint = strdup(argv[1]);
 	if (options.encoding == NULL) options.encoding = strdup("Macintosh");
 	
 	// mount volume
@@ -129,6 +130,7 @@ int main(int argc, char* argv[], char* envp[], char** exec_path) {
     strcpy(volnameOption+10, volname);
 	free(volname);
     fuse_opt_add_arg(&args, volnameOption);
+    fuse_opt_add_arg(&args, "-s");
     fuse_opt_add_arg(&args, "-ofstypename=hfs");
     fuse_opt_add_arg(&args, "-olocal");
 	//fuse_opt_add_arg(&args, "-oallow_root");
