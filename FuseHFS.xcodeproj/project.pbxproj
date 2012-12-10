@@ -12,7 +12,6 @@
 		2861C557113A706600D0447F /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2861C556113A706600D0447F /* libiconv.dylib */; };
 		286A10A411AF17D7001EEF69 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2861C556113A706600D0447F /* libiconv.dylib */; };
 		286A118211AF26C6001EEF69 /* bootblocks.h in Headers */ = {isa = PBXBuildFile; fileRef = 286A118111AF26C6001EEF69 /* bootblocks.h */; };
-		286A11A911AF2A91001EEF69 /* bootblocks.h in Headers */ = {isa = PBXBuildFile; fileRef = 286A11A811AF2A91001EEF69 /* bootblocks.h */; };
 		2883E887114974030057A7DC /* suid.c in Sources */ = {isa = PBXBuildFile; fileRef = 28F0DEF91139382300C3718A /* suid.c */; };
 		289FB8E2113BE47600409A62 /* block.c in Sources */ = {isa = PBXBuildFile; fileRef = 28F0DEB01139382300C3718A /* block.c */; };
 		289FB8E3113BE47600409A62 /* btree.c in Sources */ = {isa = PBXBuildFile; fileRef = 28F0DEB21139382300C3718A /* btree.c */; };
@@ -89,6 +88,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 289FB8D8113BE43300409A62;
 			remoteInfo = hfs;
+		};
+		639BA9921675AC5700A9518F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 639BA97D1675AA9E00A9518F;
+			remoteInfo = hfsutils;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -340,6 +346,7 @@
 		28F0DF051139382400C3718A /* version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = version.h; sourceTree = "<group>"; };
 		28F0DF061139382400C3718A /* xhfs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xhfs.h; sourceTree = "<group>"; };
 		28F0DF071139382400C3718A /* xhfs.tcl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = xhfs.tcl; sourceTree = "<group>"; };
+		639BA9851675AA9E00A9518F /* fuse_wait copy */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "fuse_wait copy"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8DD76FB20486AB0100D96B5E /* fusefs_hfs */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = fusefs_hfs; sourceTree = BUILT_PRODUCTS_DIR; };
 		FFD708640EE669A60026C014 /* fusefs_hfs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fusefs_hfs.c; sourceTree = "<group>"; };
 		FFD708750EE66DA70026C014 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
@@ -425,6 +432,7 @@
 				28E72DD01149585D00084372 /* hfsck */,
 				28E2E02111496478002DF364 /* fusefs_hfs.util */,
 				28A3D9BA122C56FD00A7869C /* fuse_wait */,
+				639BA9851675AA9E00A9518F /* fuse_wait copy */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -745,7 +753,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				286A118211AF26C6001EEF69 /* bootblocks.h in Headers */,
-				286A11A911AF2A91001EEF69 /* bootblocks.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -763,6 +770,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				639BA9931675AC5700A9518F /* PBXTargetDependency */,
 			);
 			name = hfs;
 			productName = hfs;
@@ -838,6 +846,21 @@
 			productReference = 28E72DD01149585D00084372 /* hfsck */;
 			productType = "com.apple.product-type.tool";
 		};
+		639BA97D1675AA9E00A9518F /* hfsutils */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 639BA9821675AA9E00A9518F /* Build configuration list for PBXNativeTarget "hfsutils" */;
+			buildPhases = (
+				639BA9881675AAD100A9518F /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = hfsutils;
+			productName = fuse_wait;
+			productReference = 639BA9851675AA9E00A9518F /* fuse_wait copy */;
+			productType = "com.apple.product-type.tool";
+		};
 		8DD76FA90486AB0100D96B5E /* fusefs_hfs */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1DEB928508733DD80010E9CD /* Build configuration list for PBXNativeTarget "fusefs_hfs" */;
@@ -862,6 +885,9 @@
 /* Begin PBXProject section */
 		08FB7793FE84155DC02AAC07 /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0450;
+			};
 			buildConfigurationList = 1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "FuseHFS" */;
 			compatibilityVersion = "Xcode 3.1";
 			developmentRegion = English;
@@ -879,6 +905,7 @@
 				28E2E02011496478002DF364 /* fusefs_hfs.util */,
 				28A3D9B9122C56FD00A7869C /* fuse_wait */,
 				28E72DA81149551100084372 /* FS Bundle */,
+				639BA97D1675AA9E00A9518F /* hfsutils */,
 			);
 		};
 /* End PBXProject section */
@@ -894,6 +921,22 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		639BA9881675AAD100A9518F /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "pushd hfsutils-3.2.6\n./autogen.sh\n./configure\nmake all -j";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		289FB8D6113BE43300409A62 /* Sources */ = {
@@ -989,6 +1032,11 @@
 			target = 289FB8D8113BE43300409A62 /* hfs */;
 			targetProxy = 28E72DD41149586700084372 /* PBXContainerItemProxy */;
 		};
+		639BA9931675AC5700A9518F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 639BA97D1675AA9E00A9518F /* hfsutils */;
+			targetProxy = 639BA9921675AC5700A9518F /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
@@ -998,7 +1046,6 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				HEADER_SEARCH_PATHS = (
@@ -1064,15 +1111,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = YES;
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
-				PREBINDING = NO;
 				PRODUCT_NAME = hfs;
 				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/hfsutils-3.2.6/libhfs";
 			};
@@ -1082,14 +1128,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = YES;
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
-				PREBINDING = NO;
 				PRODUCT_NAME = hfs;
 				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/hfsutils-3.2.6/libhfs";
 				ZERO_LINK = NO;
@@ -1102,7 +1147,6 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = /usr/local/bin;
@@ -1110,7 +1154,6 @@
 					"-DDEBUG",
 					"-D__FreeBSD__=10",
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = fuse_wait;
 			};
 			name = Debug;
@@ -1121,11 +1164,9 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/bin;
 				OTHER_CFLAGS = "-D__FreeBSD__=10";
-				PREBINDING = NO;
 				PRODUCT_NAME = fuse_wait;
 				ZERO_LINK = NO;
 			};
@@ -1137,12 +1178,10 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/hfsutils-3.2.6/";
 				INSTALL_PATH = /usr/local/bin;
-				PREBINDING = NO;
 				PRODUCT_NAME = fusefs_hfs.util;
 			};
 			name = Debug;
@@ -1153,11 +1192,9 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/hfsutils-3.2.6/";
 				INSTALL_PATH = /usr/local/bin;
-				PREBINDING = NO;
 				PRODUCT_NAME = fusefs_hfs.util;
 				ZERO_LINK = NO;
 			};
@@ -1167,11 +1204,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEPLOYMENT_LOCATION = NO;
 				DSTROOT = "/tmp/$(PROJECT_NAME).dst";
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1187,7 +1224,6 @@
 					"-framework",
 					AppKit,
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = fusefs_hfs;
 				WRAPPER_EXTENSION = fs;
 			};
@@ -1197,11 +1233,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEPLOYMENT_LOCATION = NO;
 				DSTROOT = "/tmp/$(PROJECT_NAME).dst";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
@@ -1216,7 +1252,6 @@
 					"-framework",
 					AppKit,
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = fusefs_hfs;
 				WRAPPER_EXTENSION = fs;
 				ZERO_LINK = NO;
@@ -1229,12 +1264,10 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = /usr/local/bin;
 				OTHER_CFLAGS = "";
-				PREBINDING = NO;
 				PRODUCT_NAME = hfsck;
 				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/hfsutils-3.2.6";
 			};
@@ -1246,13 +1279,42 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/bin;
 				OTHER_CFLAGS = "";
-				PREBINDING = NO;
 				PRODUCT_NAME = hfsck;
 				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/hfsutils-3.2.6";
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		639BA9831675AA9E00A9518F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_CFLAGS = (
+					"-DDEBUG",
+					"-D__FreeBSD__=10",
+				);
+				PRODUCT_NAME = "fuse_wait copy";
+			};
+			name = Debug;
+		};
+		639BA9841675AA9E00A9518F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_CFLAGS = "-D__FreeBSD__=10";
+				PRODUCT_NAME = "fuse_wait copy";
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -1319,6 +1381,15 @@
 			buildConfigurations = (
 				28E72DD21149585D00084372 /* Debug */,
 				28E72DD31149585D00084372 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		639BA9821675AA9E00A9518F /* Build configuration list for PBXNativeTarget "hfsutils" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				639BA9831675AA9E00A9518F /* Debug */,
+				639BA9841675AA9E00A9518F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

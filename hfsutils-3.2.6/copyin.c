@@ -40,11 +40,12 @@ int dup(int);
 # include <errno.h>
 
 # include "hfs.h"
-# include "data.h"
 # include "copyin.h"
 # include "charset.h"
 # include "binhex.h"
 # include "crc.h"
+# include "apple.h"
+# include "data.h"
 
 const char *cpi_error = "no error";
 

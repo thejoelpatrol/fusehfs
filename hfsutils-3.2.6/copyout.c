@@ -41,6 +41,7 @@ int dup(int);
 # include <sys/stat.h>
 
 # include "hfs.h"
+# include "apple.h"
 # include "data.h"
 # include "copyout.h"
 # include "charset.h"
