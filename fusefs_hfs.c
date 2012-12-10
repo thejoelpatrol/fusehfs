@@ -7,7 +7,7 @@
  *
  */
 
-#include <fuse.h>
+#include <osxfuse/fuse.h>
 #include <string.h>
 #include <errno.h>
 #include <stdio.h>

@@ -66,7 +66,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 28A3D9B9122C56FD00A7869C /* fuse_wait */;
+			remoteGlobalIDString = 28A3D9B9122C56FD00A7869C;
 			remoteInfo = fuse_wait;
 		};
 		28E2E0261149648B002DF364 /* PBXContainerItemProxy */ = {
@@ -133,9 +133,6 @@
 		28E72DAA1149551100084372 /* fusefs_hfs-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "fusefs_hfs-Info.plist"; sourceTree = "<group>"; };
 		28E72DB6114956C700084372 /* util.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = util.c; sourceTree = "<group>"; };
 		28E72DD01149585D00084372 /* hfsck */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = hfsck; sourceTree = BUILT_PRODUCTS_DIR; };
-		28F0DE231139382300C3718A /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
-		28F0DE241139382300C3718A /* config.h.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = config.h.in; sourceTree = "<group>"; };
-		28F0DE251139382300C3718A /* configure */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = configure; sourceTree = "<group>"; };
 		28F0DE261139382300C3718A /* acconfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = acconfig.h; sourceTree = "<group>"; };
 		28F0DE271139382300C3718A /* binhex.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = binhex.c; sourceTree = "<group>"; };
 		28F0DE281139382300C3718A /* binhex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = binhex.h; sourceTree = "<group>"; };
@@ -143,7 +140,6 @@
 		28F0DE2A1139382300C3718A /* CHANGES */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CHANGES; sourceTree = "<group>"; };
 		28F0DE2B1139382300C3718A /* charset.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = charset.c; sourceTree = "<group>"; };
 		28F0DE2C1139382300C3718A /* charset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = charset.h; sourceTree = "<group>"; };
-		28F0DE2D1139382300C3718A /* config.cache */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = config.cache; sourceTree = "<group>"; };
 		28F0DE2E1139382300C3718A /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		28F0DE2F1139382300C3718A /* config.h.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = config.h.in; sourceTree = "<group>"; };
 		28F0DE301139382300C3718A /* config.log */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = config.log; sourceTree = "<group>"; };
@@ -263,9 +259,6 @@
 		28F0DEA61139382300C3718A /* images.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = images.h; sourceTree = "<group>"; };
 		28F0DEA71139382300C3718A /* INSTALL */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = INSTALL; sourceTree = "<group>"; };
 		28F0DEA81139382300C3718A /* install-sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "install-sh"; sourceTree = "<group>"; };
-		28F0DEAB1139382300C3718A /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
-		28F0DEAC1139382300C3718A /* config.h.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = config.h.in; sourceTree = "<group>"; };
-		28F0DEAD1139382300C3718A /* configure */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = configure; sourceTree = "<group>"; };
 		28F0DEAE1139382300C3718A /* acconfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = acconfig.h; sourceTree = "<group>"; };
 		28F0DEAF1139382300C3718A /* apple.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = apple.h; sourceTree = "<group>"; };
 		28F0DEB01139382300C3718A /* block.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = block.c; sourceTree = "<group>"; };
@@ -302,9 +295,6 @@
 		28F0DED01139382300C3718A /* version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = version.h; sourceTree = "<group>"; };
 		28F0DED11139382300C3718A /* volume.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = volume.c; sourceTree = "<group>"; };
 		28F0DED21139382300C3718A /* volume.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = volume.h; sourceTree = "<group>"; };
-		28F0DED51139382300C3718A /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
-		28F0DED61139382300C3718A /* config.h.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = config.h.in; sourceTree = "<group>"; };
-		28F0DED71139382300C3718A /* configure */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = configure; sourceTree = "<group>"; };
 		28F0DED81139382300C3718A /* acconfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = acconfig.h; sourceTree = "<group>"; };
 		28F0DED91139382300C3718A /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		28F0DEDA1139382300C3718A /* config.h.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = config.h.in; sourceTree = "<group>"; };
@@ -454,7 +444,6 @@
 			isa = PBXGroup;
 			children = (
 				286A11A811AF2A91001EEF69 /* bootblocks.h */,
-				28F0DE221139382300C3718A /* .stamp */,
 				28F0DE261139382300C3718A /* acconfig.h */,
 				286A118111AF26C6001EEF69 /* bootblocks.h */,
 				28F0DE271139382300C3718A /* binhex.c */,
@@ -463,7 +452,6 @@
 				28F0DE2A1139382300C3718A /* CHANGES */,
 				28F0DE2B1139382300C3718A /* charset.c */,
 				28F0DE2C1139382300C3718A /* charset.h */,
-				28F0DE2D1139382300C3718A /* config.cache */,
 				28F0DE2E1139382300C3718A /* config.h */,
 				28F0DE2F1139382300C3718A /* config.h.in */,
 				28F0DE301139382300C3718A /* config.log */,
@@ -549,16 +537,6 @@
 				28F0DF071139382400C3718A /* xhfs.tcl */,
 			);
 			path = "hfsutils-3.2.6";
-			sourceTree = "<group>";
-		};
-		28F0DE221139382300C3718A /* .stamp */ = {
-			isa = PBXGroup;
-			children = (
-				28F0DE231139382300C3718A /* config.h */,
-				28F0DE241139382300C3718A /* config.h.in */,
-				28F0DE251139382300C3718A /* configure */,
-			);
-			path = .stamp;
 			sourceTree = "<group>";
 		};
 		28F0DE411139382300C3718A /* doc */ = {
@@ -652,7 +630,6 @@
 		28F0DEA91139382300C3718A /* libhfs */ = {
 			isa = PBXGroup;
 			children = (
-				28F0DEAA1139382300C3718A /* .stamp */,
 				28F0DEAE1139382300C3718A /* acconfig.h */,
 				28F0DEAF1139382300C3718A /* apple.h */,
 				28F0DEB01139382300C3718A /* block.c */,
@@ -694,16 +671,6 @@
 			path = libhfs;
 			sourceTree = "<group>";
 		};
-		28F0DEAA1139382300C3718A /* .stamp */ = {
-			isa = PBXGroup;
-			children = (
-				28F0DEAB1139382300C3718A /* config.h */,
-				28F0DEAC1139382300C3718A /* config.h.in */,
-				28F0DEAD1139382300C3718A /* configure */,
-			);
-			path = .stamp;
-			sourceTree = "<group>";
-		};
 		28F0DECA1139382300C3718A /* os */ = {
 			isa = PBXGroup;
 			children = (
@@ -715,7 +682,6 @@
 		28F0DED31139382300C3718A /* librsrc */ = {
 			isa = PBXGroup;
 			children = (
-				28F0DED41139382300C3718A /* .stamp */,
 				28F0DED81139382300C3718A /* acconfig.h */,
 				28F0DED91139382300C3718A /* config.h */,
 				28F0DEDA1139382300C3718A /* config.h.in */,
@@ -735,16 +701,6 @@
 				28F0DEE81139382300C3718A /* version.h */,
 			);
 			path = librsrc;
-			sourceTree = "<group>";
-		};
-		28F0DED41139382300C3718A /* .stamp */ = {
-			isa = PBXGroup;
-			children = (
-				28F0DED51139382300C3718A /* config.h */,
-				28F0DED61139382300C3718A /* config.h.in */,
-				28F0DED71139382300C3718A /* configure */,
-			);
-			path = .stamp;
 			sourceTree = "<group>";
 		};
 		28F0DEE91139382300C3718A /* linux */ = {
@@ -908,7 +864,11 @@
 			isa = PBXProject;
 			buildConfigurationList = 1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "FuseHFS" */;
 			compatibilityVersion = "Xcode 3.1";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				en,
+			);
 			mainGroup = 08FB7794FE84155DC02AAC07 /* HFSLives */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -1084,28 +1044,19 @@
 		1DEB928A08733DD80010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				GCC_C_LANGUAGE_STANDARD = c99;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				ONLY_ACTIVE_ARCH = YES;
-				PREBINDING = NO;
-				SDKROOT = macosx10.6;
-				VALID_ARCHS = "i386 x86_64";
 			};
 			name = Debug;
 		};
 		1DEB928B08733DD80010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				GCC_C_LANGUAGE_STANDARD = c99;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				PREBINDING = NO;
-				SDKROOT = macosx10.6;
-				VALID_ARCHS = "i386 x86_64";
 			};
 			name = Release;
 		};
@@ -1113,7 +1064,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
@@ -1132,7 +1082,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
@@ -1288,7 +1237,6 @@
 				PREBINDING = NO;
 				PRODUCT_NAME = hfsck;
 				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/hfsutils-3.2.6";
-				VALID_ARCHS = "i386 ppc ppc7400 ppc970";
 			};
 			name = Debug;
 		};
@@ -1305,7 +1253,6 @@
 				PREBINDING = NO;
 				PRODUCT_NAME = hfsck;
 				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/hfsutils-3.2.6";
-				VALID_ARCHS = "i386 ppc ppc7400 ppc970";
 				ZERO_LINK = NO;
 			};
 			name = Release;
