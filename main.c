@@ -131,8 +131,9 @@ int main(int argc, char* argv[], char* envp[], char** exec_path) {
 	free(volname);
     fuse_opt_add_arg(&args, volnameOption);
     fuse_opt_add_arg(&args, "-s");
+    //fuse_opt_add_arg(&args, "-d");
     fuse_opt_add_arg(&args, "-ofstypename=hfs");
-    fuse_opt_add_arg(&args, "-olocal");
+    //fuse_opt_add_arg(&args, "-olocal");
 	//fuse_opt_add_arg(&args, "-oallow_root");
     fuse_opt_add_arg(&args, "-oallow_other");
 	fuse_opt_add_arg(&args, "-odefer_permissions");

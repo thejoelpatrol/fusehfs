@@ -23,36 +23,36 @@ extern const unsigned char hfs_charorder[];
 
   signed  char d_getsb(register const unsigned char *);
 unsigned  char d_getub(register const unsigned char *);
-  signed short d_getsw(register const unsigned char *);
-unsigned short d_getuw(register const unsigned char *);
-  signed  long d_getsl(register const unsigned char *);
-unsigned  long d_getul(register const unsigned char *);
+  Integer d_getsw(register const unsigned char *);
+ UInteger d_getuw(register const unsigned char *);
+  LongInt d_getsl(register const unsigned char *);
+ ULongInt d_getul(register const unsigned char *);
 
 void d_putsb(register unsigned char *, register   signed  char);
 void d_putub(register unsigned char *, register unsigned  char);
-void d_putsw(register unsigned char *, register   signed short);
-void d_putuw(register unsigned char *, register unsigned short);
-void d_putsl(register unsigned char *, register   signed  long);
-void d_putul(register unsigned char *, register unsigned  long);
+void d_putsw(register unsigned char *, register   Integer);
+void d_putuw(register unsigned char *, register UInteger);
+void d_putsl(register unsigned char *, register   LongInt);
+void d_putul(register unsigned char *, register ULongInt);
 
 void d_fetchsb(register const unsigned char **, register   signed  char *);
 void d_fetchub(register const unsigned char **, register unsigned  char *);
-void d_fetchsw(register const unsigned char **, register   signed short *);
-void d_fetchuw(register const unsigned char **, register unsigned short *);
-void d_fetchsl(register const unsigned char **, register   signed  long *);
-void d_fetchul(register const unsigned char **, register unsigned  long *);
+void d_fetchsw(register const unsigned char **, register   Integer *);
+void d_fetchuw(register const unsigned char **, register UInteger *);
+void d_fetchsl(register const unsigned char **, register   LongInt *);
+void d_fetchul(register const unsigned char **, register ULongInt *);
 
 void d_storesb(register unsigned char **, register   signed  char);
 void d_storeub(register unsigned char **, register unsigned  char);
-void d_storesw(register unsigned char **, register   signed short);
-void d_storeuw(register unsigned char **, register unsigned short);
-void d_storesl(register unsigned char **, register   signed  long);
-void d_storeul(register unsigned char **, register unsigned  long);
+void d_storesw(register unsigned char **, register   Integer);
+void d_storeuw(register unsigned char **, register UInteger);
+void d_storesl(register unsigned char **, register   LongInt);
+void d_storeul(register unsigned char **, register ULongInt);
 
 void d_fetchstr(const unsigned char **, char *, unsigned);
 void d_storestr(unsigned char **, const char *, unsigned);
 
 int d_relstring(const char *, const char *);
 
-time_t d_ltime(unsigned long);
-unsigned long d_mtime(time_t);
+time_t d_ltime(ULongInt);
+ULongInt d_mtime(time_t);

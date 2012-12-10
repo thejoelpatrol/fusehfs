@@ -850,7 +850,7 @@ int hfs_getfork(hfsfile *file)
  */
 unsigned long hfs_read(hfsfile *file, void *buf, unsigned long len)
 {
-  unsigned long *lglen, count;
+  ULongInt *lglen, count;
   byte *ptr = buf;
 
   f_getptrs(file, 0, &lglen, 0);
@@ -903,7 +903,7 @@ fail:
  */
 unsigned long hfs_write(hfsfile *file, const void *buf, unsigned long len)
 {
-  unsigned long *lglen, *pylen, count;
+  ULongInt *lglen, *pylen, count;
   const byte *ptr = buf;
 
   if (file->vol->flags & HFS_VOL_READONLY)
@@ -978,7 +978,7 @@ fail:
  */
 int hfs_truncate(hfsfile *file, unsigned long len)
 {
-  unsigned long *lglen;
+  ULongInt *lglen;
 
   f_getptrs(file, 0, &lglen, 0);
 
@@ -1008,7 +1008,7 @@ fail:
  */
 unsigned long hfs_seek(hfsfile *file, long offset, int from)
 {
-  unsigned long *lglen, newpos;
+  ULongInt *lglen, newpos;
 
   f_getptrs(file, 0, &lglen, 0);
 
@@ -1033,7 +1033,7 @@ unsigned long hfs_seek(hfsfile *file, long offset, int from)
       break;
 
     default:
-      ERROR(EINVAL, 0);
+      ERROR(EINVAL, "Unexpected error in hfs_seek()");
     }
 
   if (newpos > *lglen)
@@ -1178,7 +1178,7 @@ int hfs_mkdir(hfsvol *vol, const char *path)
     ERROR(EEXIST, 0);
 
   if (parid == HFS_CNID_ROOTPAR)
-    ERROR(EINVAL, 0);
+    ERROR(EINVAL, "Unexpected error in hfs_mkdir()");
 
   if (vol->flags & HFS_VOL_READONLY)
     ERROR(EROFS, 0);
@@ -1212,7 +1212,7 @@ int hfs_rmdir(hfsvol *vol, const char *path)
     ERROR(ENOTEMPTY, 0);
 
   if (parid == HFS_CNID_ROOTPAR)
-    ERROR(EINVAL, 0);
+    ERROR(EINVAL, "Unexpected error in hfs_rmdir()");
 
   if (vol->flags & HFS_VOL_READONLY)
     ERROR(EROFS, 0);
@@ -1259,7 +1259,7 @@ int hfs_delete(hfsvol *vol, const char *path)
     ERROR(EISDIR, 0);
 
   if (file.parid == HFS_CNID_ROOTPAR)
-    ERROR(EINVAL, 0);
+    ERROR(EINVAL, "Unexpected error in hfs_delete()");
 
   if (vol->flags & HFS_VOL_READONLY)
     ERROR(EROFS, 0);

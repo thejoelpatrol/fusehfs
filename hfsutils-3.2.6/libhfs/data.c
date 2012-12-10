@@ -30,6 +30,7 @@
 #  include <sys/time.h>
 # endif
 
+# include "apple.h"
 # include "data.h"
 
 # define TIMEDIFF  2082844800UL
@@ -124,26 +125,26 @@ unsigned short d_getuw(register const unsigned char *ptr)
  * NAME:	data->getsl()
  * DESCRIPTION:	marshal 4 signed bytes into local host format
  */
-signed long d_getsl(register const unsigned char *ptr)
+LongInt d_getsl(register const unsigned char *ptr)
 {
   return
-    (((  signed long) ptr[0] << 24) |
-     ((unsigned long) ptr[1] << 16) |
-     ((unsigned long) ptr[2] <<  8) |
-     ((unsigned long) ptr[3] <<  0));
+    (((  LongInt) ptr[0] << 24) |
+     ((ULongInt) ptr[1] << 16) |
+     ((ULongInt) ptr[2] <<  8) |
+     ((ULongInt) ptr[3] <<  0));
 }
 
 /*
  * NAME:	data->getul()
  * DESCRIPTION:	marshal 4 unsigned bytes into local host format
  */
-unsigned long d_getul(register const unsigned char *ptr)
+ULongInt d_getul(register const unsigned char *ptr)
 {
   return
-    (((unsigned long) ptr[0] << 24) |
-     ((unsigned long) ptr[1] << 16) |
-     ((unsigned long) ptr[2] <<  8) |
-     ((unsigned long) ptr[3] <<  0));
+    (((ULongInt) ptr[0] << 24) |
+     ((ULongInt) ptr[1] << 16) |
+     ((ULongInt) ptr[2] <<  8) |
+     ((ULongInt) ptr[3] <<  0));
 }
 
 /*
@@ -193,12 +194,12 @@ void d_putuw(register unsigned char *ptr,
  * DESCRIPTION:	marshal 4 signed bytes out in big-endian format
  */
 void d_putsl(register unsigned char *ptr,
-	     register signed long data)
+	     register LongInt data)
 {
-  *ptr++ = ((unsigned long) data & 0xff000000UL) >> 24;
-  *ptr++ = ((unsigned long) data & 0x00ff0000UL) >> 16;
-  *ptr++ = ((unsigned long) data & 0x0000ff00UL) >>  8;
-  *ptr   = ((unsigned long) data & 0x000000ffUL) >>  0;
+  *ptr++ = ((ULongInt) data & 0xff000000UL) >> 24;
+  *ptr++ = ((ULongInt) data & 0x00ff0000UL) >> 16;
+  *ptr++ = ((ULongInt) data & 0x0000ff00UL) >>  8;
+  *ptr   = ((ULongInt) data & 0x000000ffUL) >>  0;
 }
 
 /*
@@ -206,7 +207,7 @@ void d_putsl(register unsigned char *ptr,
  * DESCRIPTION:	marshal 4 unsigned bytes out in big-endian format
  */
 void d_putul(register unsigned char *ptr,
-	     register unsigned long data)
+	     register ULongInt data)
 {
   *ptr++ = (data & 0xff000000UL) >> 24;
   *ptr++ = (data & 0x00ff0000UL) >> 16;
@@ -265,13 +266,13 @@ void d_fetchuw(register const unsigned char **ptr,
  * DESCRIPTION:	incrementally retrieve a signed long word of data
  */
 void d_fetchsl(register const unsigned char **ptr,
-	       register signed long *dest)
+	       register LongInt *dest)
 {
   *dest =
-    (((  signed long) (*ptr)[0] << 24) |
-     ((unsigned long) (*ptr)[1] << 16) |
-     ((unsigned long) (*ptr)[2] <<  8) |
-     ((unsigned long) (*ptr)[3] <<  0));
+    (((  LongInt) (*ptr)[0] << 24) |
+     ((ULongInt) (*ptr)[1] << 16) |
+     ((ULongInt) (*ptr)[2] <<  8) |
+     ((ULongInt) (*ptr)[3] <<  0));
   *ptr += 4;
 }
 
@@ -280,13 +281,13 @@ void d_fetchsl(register const unsigned char **ptr,
  * DESCRIPTION:	incrementally retrieve an unsigned long word of data
  */
 void d_fetchul(register const unsigned char **ptr,
-	       register unsigned long *dest)
+	       register ULongInt *dest)
 {
   *dest =
-    (((unsigned long) (*ptr)[0] << 24) |
-     ((unsigned long) (*ptr)[1] << 16) |
-     ((unsigned long) (*ptr)[2] <<  8) |
-     ((unsigned long) (*ptr)[3] <<  0));
+    (((ULongInt) (*ptr)[0] << 24) |
+     ((ULongInt) (*ptr)[1] << 16) |
+     ((ULongInt) (*ptr)[2] <<  8) |
+     ((ULongInt) (*ptr)[3] <<  0));
   *ptr += 4;
 }
 
@@ -337,12 +338,12 @@ void d_storeuw(register unsigned char **ptr,
  * DESCRIPTION:	incrementally store a signed long word of data
  */
 void d_storesl(register unsigned char **ptr,
-	       register signed long data)
+	       register LongInt data)
 {
-  *(*ptr)++ = ((unsigned long) data & 0xff000000UL) >> 24;
-  *(*ptr)++ = ((unsigned long) data & 0x00ff0000UL) >> 16;
-  *(*ptr)++ = ((unsigned long) data & 0x0000ff00UL) >>  8;
-  *(*ptr)++ = ((unsigned long) data & 0x000000ffUL) >>  0;
+  *(*ptr)++ = ((ULongInt) data & 0xff000000UL) >> 24;
+  *(*ptr)++ = ((ULongInt) data & 0x00ff0000UL) >> 16;
+  *(*ptr)++ = ((ULongInt) data & 0x0000ff00UL) >>  8;
+  *(*ptr)++ = ((ULongInt) data & 0x000000ffUL) >>  0;
 }
 
 /*
@@ -350,7 +351,7 @@ void d_storesl(register unsigned char **ptr,
  * DESCRIPTION:	incrementally store an unsigned long word of data
  */
 void d_storeul(register unsigned char **ptr,
-	       register unsigned long data)
+	       register ULongInt data)
 {
   *(*ptr)++ = (data & 0xff000000UL) >> 24;
   *(*ptr)++ = (data & 0x00ff0000UL) >> 16;
@@ -464,7 +465,7 @@ void calctzdiff(void)
  * NAME:	data->ltime()
  * DESCRIPTION:	convert MacOS time to local time
  */
-time_t d_ltime(unsigned long mtime)
+time_t d_ltime(ULongInt mtime)
 {
   if (tzdiff == -1)
     calctzdiff();
@@ -476,10 +477,10 @@ time_t d_ltime(unsigned long mtime)
  * NAME:	data->mtime()
  * DESCRIPTION:	convert local time to MacOS time
  */
-unsigned long d_mtime(time_t ltime)
+ULongInt d_mtime(time_t ltime)
 {
   if (tzdiff == -1)
     calctzdiff();
 
-  return (unsigned long) (ltime + tzdiff) + TIMEDIFF;
+  return (ULongInt) (ltime + tzdiff) + TIMEDIFF;
 }

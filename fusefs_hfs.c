@@ -204,7 +204,7 @@ static int FuseHFS_mknod(const char *path, mode_t mode, dev_t rdev) {
 	
 	// open file
 	hfsfile *file;
-	if (file = hfs_create(NULL, hfspath, "TEXT", "FUSE")) {
+	if ((file = hfs_create(NULL, hfspath, "TEXT", "FUSE"))) {
 		// file
 		hfs_close(file);
 		hfs_flush(NULL);
@@ -356,7 +356,7 @@ static int FuseHFS_create(const char *path, mode_t mode, struct fuse_file_info *
 	
 	// open file
 	hfsfile *file;
-	if (file = hfs_create(NULL, hfspath, "TEXT", "FUSE")) {
+	if ((file = hfs_create(NULL, hfspath, "TEXT", "FUSE"))) {
 		// close and reopen, because it won't exist until it's closed
 		hfs_close(file);
 		file = hfs_open(NULL, hfspath);
@@ -380,7 +380,7 @@ static int FuseHFS_open(const char *path, struct fuse_file_info *fi) {
 	
 	// open file
 	hfsfile *file = NULL;
-	if (file = hfs_open(NULL, hfspath)) {
+	if ((file = hfs_open(NULL, hfspath))) {
 		// file
 		fi->fh = (uint64_t)file;
 		free(hfspath);

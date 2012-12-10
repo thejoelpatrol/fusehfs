@@ -19,16 +19,18 @@
  * $Id: apple.h,v 1.1 1998/04/11 08:27:11 rob Exp $
  */
 
+#include <stdint.h>
+
 typedef signed char	Char;
 typedef unsigned char	UChar;
 typedef signed char	SignedByte;
-typedef signed short	Integer;
-typedef unsigned short	UInteger;
-typedef signed long	LongInt;
-typedef unsigned long	ULongInt;
+typedef int16_t	Integer;
+typedef uint16_t	UInteger;
+typedef int32_t	LongInt;
+typedef uint32_t	ULongInt;
 typedef char		Str15[16];
 typedef char		Str31[32];
-typedef long		OSType;
+typedef int32_t		OSType;
 
 typedef struct {
   Integer	sbSig;		/* device signature (should be 0x4552) */

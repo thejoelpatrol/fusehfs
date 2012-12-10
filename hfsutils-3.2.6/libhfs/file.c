@@ -117,7 +117,7 @@ void f_selectfork(hfsfile *file, int fork)
  * DESCRIPTION:	make pointers to the current fork's lengths and extents
  */
 void f_getptrs(hfsfile *file, ExtDataRec **extrec,
-	       unsigned long **lglen, unsigned long **pylen)
+	       ULongInt **lglen, ULongInt **pylen)
 {
   if (file->fork == fkData)
     {
@@ -203,7 +203,7 @@ int f_addextent(hfsfile *file, ExtDescriptor *blocks)
 {
   hfsvol *vol = file->vol;
   ExtDataRec *extrec;
-  unsigned long *pylen;
+  ULongInt *pylen;
   unsigned int start, end;
   node n;
   int i;
@@ -350,7 +350,7 @@ int f_trunc(hfsfile *file)
 {
   hfsvol *vol = file->vol;
   ExtDataRec *extrec;
-  unsigned long *lglen, *pylen, alblksz, newpylen;
+  ULongInt *lglen, *pylen, alblksz, newpylen;
   unsigned int dlen, start, end;
   node n;
   int i;

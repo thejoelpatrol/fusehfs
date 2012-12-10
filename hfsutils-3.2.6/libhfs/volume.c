@@ -758,7 +758,7 @@ fail:
  * DESCRIPTION:	translate a pathname; return catalog information
  */
 int v_resolve(hfsvol **vol, const char *path,
-	      CatDataRec *data, long *parid, char *fname, node *np)
+	      CatDataRec *data, unsigned long *parid, char *fname, node *np)
 {
   unsigned long dirid;
   char name[HFS_MAX_FLEN + 1], *nptr;

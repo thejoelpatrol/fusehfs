@@ -26,7 +26,7 @@ enum {
 
 void f_init(hfsfile *, hfsvol *, long, const char *);
 void f_selectfork(hfsfile *, int);
-void f_getptrs(hfsfile *, ExtDataRec **, unsigned long **, unsigned long **);
+void f_getptrs(hfsfile *, ExtDataRec **, ULongInt **, ULongInt **);
 
 int f_doblock(hfsfile *, unsigned long, block *,
 	      int (*)(hfsvol *, unsigned int, unsigned int, block *));
