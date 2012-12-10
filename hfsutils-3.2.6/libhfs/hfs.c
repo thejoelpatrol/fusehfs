@@ -24,6 +24,7 @@
 # endif
 
 # include <stdlib.h>
+# include <stdio.h>
 # include <string.h>
 # include <time.h>
 # include <errno.h>
@@ -37,7 +38,7 @@
 # include "node.h"
 # include "record.h"
 # include "volume.h"
-# include "bootblocks.h"
+# include "../bootblocks.h"
 
 const char *hfs_error = "no error";	/* static error string */
 
@@ -733,6 +734,7 @@ fail:
 hfsfile *hfs_open(hfsvol *vol, const char *path)
 {
   hfsfile *file = 0;
+  hfsfile *f = 0;
 
   if (getvol(&vol) == -1)
     ERROR(ENODEV, 0);
@@ -748,7 +750,7 @@ hfsfile *hfs_open(hfsvol *vol, const char *path)
     ERROR(EISDIR, 0);
 	
   // see if it's already open
-  for(hfsfile *f = vol->files; f; f = f->next) {
+  for(f = vol->files; f; f = f->next) {
 	  if (f->cat.u.fil.filFlNum == file->cat.u.fil.filFlNum) {
 		  // already open, increment refcount and return
 		  FREE(file);
@@ -789,6 +791,7 @@ fail:
 int hfs_isopen(hfsvol *vol, const char *path)
 {
 	hfsfile *file = 0;
+	hfsfile *f = 0;
 	
 	if (getvol(&vol) == -1)
 		ERROR(ENODEV, 0);
@@ -806,7 +809,7 @@ int hfs_isopen(hfsvol *vol, const char *path)
 	// see if it's already open
 	ULongInt num = file->cat.u.fil.filFlNum;
 	FREE(file);
-	for(hfsfile *f = vol->files; f; f = f->next) {
+	for(f = vol->files; f; f = f->next) {
 		if (f->cat.u.fil.filFlNum == num) return 1;
 	}
 	return 0;
