@@ -1,0 +1,25 @@
+This file contains any messages produced by compilers while
+running configure, to aid debugging if configure makes a mistake.
+
+configure:543: checking whether make sets ${MAKE}
+configure:572: checking for gcc
+configure:649: checking whether the C compiler (gcc  ) works
+configure:663: gcc -o conftest    conftest.c  1>&5
+configure:660:1: warning: type specifier missing, defaults to 'int' [-Wimplicit-int]
+main(){return(0);}
+^~~~
+1 warning generated.
+configure:683: checking whether the C compiler (gcc  ) is a cross-compiler
+configure:688: checking whether we are using GNU C
+configure:712: checking whether gcc accepts -g
+configure:769: checking for a BSD compatible install
+configure:821: checking for ranlib
+configure:849: checking how to run the C preprocessor
+configure:911: checking whether gcc needs -traditional
+configure:959: checking for ANSI C header files
+configure:1066: checking for unistd.h
+configure:1066: checking for fcntl.h
+configure:1105: checking for size_t
+configure:1138: checking whether struct tm is in sys/time.h or time.h
+configure:1173: checking for working const
+configure:1253: checking for mktime
