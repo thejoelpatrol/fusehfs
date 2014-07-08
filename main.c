@@ -18,6 +18,8 @@
 #define FUSEHFS_VERSION "0.1.3"
 
 extern struct fuse_operations FuseHFS_operations;
+extern int log_to_file();
+extern void log_invoking_command(int argc, char *argv[]);
 
 struct fusehfs_options options = {
     .path =         NULL,
@@ -92,8 +94,12 @@ char * iconv_convert(const char *src, const char *from, const char *to) {
 	return out;
 }
 
+
 int main(int argc, char* argv[], char* envp[], char** exec_path) {
-	struct fuse_args args = FUSE_ARGS_INIT(argc, argv);
+	log_to_file(); // ignoring return value for now
+    log_invoking_command(argc, argv);
+    
+    struct fuse_args args = FUSE_ARGS_INIT(argc, argv);
 	
 	bzero(&options, sizeof options);
 	if (fuse_opt_parse(&args, NULL, FuseHFS_opts, FuseHFS_opt_proc)) return 1;
@@ -149,5 +155,6 @@ int main(int argc, char* argv[], char* envp[], char** exec_path) {
 	//free(options.path);
 	//free(options.encoding);
 	//fuse_opt_free_args(&args);
+    fflush(stdout);
 	return ret;
 }
