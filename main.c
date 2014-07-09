@@ -96,7 +96,7 @@ char * iconv_convert(const char *src, const char *from, const char *to) {
 
 
 int main(int argc, char* argv[], char* envp[], char** exec_path) {
-	log_to_file(); // ignoring return value for now
+	int log = log_to_file();
     log_invoking_command(argc, argv);
     
     struct fuse_args args = FUSE_ARGS_INIT(argc, argv);
@@ -150,11 +150,21 @@ int main(int argc, char* argv[], char* envp[], char** exec_path) {
     free(fsnameOption);
 	
 	// run fuse
+    char buf[1024];
+    for (int i = 0; i < args.argc; i++) {
+        if (strlen(buf) + strlen(args.argv[i]) + 1 <= 1024) {
+            strcat(buf, args.argv[i]);
+            buf[strlen(buf) + 1] = 0;
+            buf[strlen(buf)] = ' ';
+        }
+    }
+    dprintf(log, "Running fuse_main: fusemain(%d, %s)\n", args.argc, buf);
 	int ret = fuse_main(args.argc, args.argv, &FuseHFS_operations, &options);
 	
 	//free(options.path);
 	//free(options.encoding);
 	//fuse_opt_free_args(&args);
+    dprintf(log, "Quitting fusefs_hfs, returning %d\n", ret);
     fflush(stdout);
 	return ret;
 }
