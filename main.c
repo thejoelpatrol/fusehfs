@@ -14,12 +14,12 @@
 #include <iconv.h>
 #include <libhfs/hfs.h>
 #include "fusefs_hfs.h"
+#include "log.h"
 
 #define FUSEHFS_VERSION "0.1.3"
 
+
 extern struct fuse_operations FuseHFS_operations;
-extern int log_to_file();
-extern void log_invoking_command(int argc, char *argv[]);
 
 struct fusehfs_options options = {
     .path =         NULL,
@@ -150,20 +150,14 @@ int main(int argc, char* argv[], char* envp[], char** exec_path) {
     free(fsnameOption);
 	
 	// run fuse
-    char buf[1024];
-    for (int i = 0; i < args.argc; i++) {
-        if (strlen(buf) + strlen(args.argv[i]) + 1 <= 1024) {
-            strcat(buf, args.argv[i]);
-            buf[strlen(buf) + 1] = 0;
-            buf[strlen(buf)] = ' ';
-        }
-    }
-    dprintf(log, "Running fuse_main: fusemain(%d, %s)\n", args.argc, buf);
+    log_fuse_call(&args);
 	int ret = fuse_main(args.argc, args.argv, &FuseHFS_operations, &options);
 	
 	//free(options.path);
 	//free(options.encoding);
 	//fuse_opt_free_args(&args);
+    char *macfuse_mode = getenv("OSXFUSE_MACFUSE_MODE");
+    dprintf(log, "MacFUSE mode: %s\n", macfuse_mode);
     dprintf(log, "Quitting fusefs_hfs, returning %d\n", ret);
     fflush(stdout);
 	return ret;

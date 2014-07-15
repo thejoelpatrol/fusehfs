@@ -14,6 +14,7 @@
 #include <time.h>
 #include <pwd.h>
 #include <limits.h>
+#include <osxfuse/fuse.h>
 
 #define LOGPATH "/Library/Logs/fusehfs.log"
 
@@ -49,3 +50,15 @@ void log_invoking_command(int argc, char *argv[]) {
     fflush(stdout);
 }
 
+void log_fuse_call(struct fuse_args *args) {
+    char buf[1024];
+    for (int i = 0; i < args->argc; i++) {
+        if (strlen(buf) + strlen(args->argv[i]) + 1 <= 1024) {
+            strcat(buf, args->argv[i]);
+            buf[strlen(buf) + 1] = 0;
+            buf[strlen(buf)] = ' ';
+        }
+    }
+    printf("Running fuse_main: fusemain(%d, %s)\n", args->argc, buf);
+    fflush(stdout);
+}

@@ -22,9 +22,12 @@
 #include <libkern/OSByteOrder.h>
 #include <sys/xattr.h>
 #include "fusefs_hfs.h"
+#include "log.h"
+
+#define DEBUG 1
 
 #ifdef DEBUG
-#define dprintf(args...) fprintf(stderr, args)
+#define dprintf(args...) printf(args)
 #else
 #define dprintf(fmt, args...)
 #endif
@@ -455,11 +458,12 @@ void * FuseHFS_init(struct fuse_conn_info *conn) {
 	FUSE_ENABLE_XTIMES(conn); // and apparently this doesn't either
 #endif
 	
-	// make log
+	
 #ifdef DEBUG
-	char logfn[128];
-	sprintf(logfn, "/fusefs_hfs/FuseHFS.%d.log", getpid());
-	stderr = freopen(logfn, "a", stderr);
+	//char logfn[128];
+	//sprintf(logfn, "/fusefs_hfs/FuseHFS.%d.log", getpid());
+	//stderr = freopen(logfn, "a", stderr);
+    log_to_file();
 	fprintf(stderr, "FuseHFS_init\n");
 	fflush(stderr);
 #endif
@@ -532,7 +536,7 @@ static int FuseHFS_listxattr(const char *path, char *list, size_t size) {
 
 static int FuseHFS_getxattr(const char *path, const char *name, char *value, size_t size,
 				uint32_t position) {
-	dprintf("getxattr %s %s %p %lu %u\n", path, name, value, size, position);
+	//dprintf("getxattr %s %s %p %lu %u\n", path, name, value, size, position);
 	
 	// convert to hfs path
 	char *hfspath = mkhfspath(path);
