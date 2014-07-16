@@ -26,8 +26,8 @@ I can mount and unmount functional (read/write) HFS disk images from the shell, 
 
 $: hdiutil attach /path/to/disk/image
 $: mount -t fusefs_hfs /dev/disk# /specify/a/mount/point
-# where disk# is the value that hdiutil reports
-# And I can safely unmount the volume with just:
+\#where disk# is the value that hdiutil reports
+\#And I can safely unmount the volume with just:
 $: umount /mount/point/you/specified
 
 --------------------------------
