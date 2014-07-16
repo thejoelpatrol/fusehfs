@@ -11,6 +11,7 @@ The original fusehfs code was published under GPL v2, so this version's code is 
 
 --------------------------------
 Status 7/8/2014
+--------------------------------
 
 As described in this thread on the Emaculation forum: http://www.emaculation.com/forum/viewtopic.php?f=7&t=8181&p=48333#p48333
 
@@ -32,6 +33,7 @@ $: umount /mount/point/you/specified
 
 --------------------------------
 Status 7/15/2014
+--------------------------------
 
 Someone on the Emaculation forum speculated the problem was due to permissions, which is on the right track.
 
