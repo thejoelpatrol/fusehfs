@@ -17,7 +17,7 @@
 #include "log.h"
 
 #define FUSEHFS_VERSION "0.1.3"
-
+#define DEBUG
 
 extern struct fuse_operations FuseHFS_operations;
 
@@ -97,8 +97,9 @@ char * iconv_convert(const char *src, const char *from, const char *to) {
 
 int main(int argc, char* argv[], char* envp[], char** exec_path) {
 	int log = log_to_file();
+#ifdef DEBUG
     log_invoking_command(argc, argv);
-    
+#endif
     struct fuse_args args = FUSE_ARGS_INIT(argc, argv);
 	
 	bzero(&options, sizeof options);
@@ -150,15 +151,19 @@ int main(int argc, char* argv[], char* envp[], char** exec_path) {
     free(fsnameOption);
 	
 	// run fuse
+#ifdef DEBUG
     log_fuse_call(&args);
+#endif
 	int ret = fuse_main(args.argc, args.argv, &FuseHFS_operations, &options);
 	
 	//free(options.path);
 	//free(options.encoding);
 	//fuse_opt_free_args(&args);
+#ifdef DEBUG
     char *macfuse_mode = getenv("OSXFUSE_MACFUSE_MODE");
     dprintf(log, "MacFUSE mode: %s\n", macfuse_mode);
-    dprintf(log, "Quitting fusefs_hfs, returning %d\n", ret);
+    dprintf(log, "Quitting fusefs_hfs, returning %d\n\n", ret);
     fflush(stdout);
-	return ret;
+#endif
+    return ret;
 }
