@@ -25,11 +25,11 @@ I'm able to make fusehfs work with FUSE for OS X, to an extent. My setup is as f
 
 I can mount and unmount functional (read/write) HFS disk images from the shell, but definitely not using the graphical DiskImageMounter/DiskImages UI Agent/Disk Utility. These commands work for me:
 
-$: hdiutil attach /path/to/disk/image
-$: mount -t fusefs_hfs /dev/disk# /specify/a/mount/point
-\#where disk# is the value that hdiutil reports
-\#And I can safely unmount the volume with just:
-$: umount /mount/point/you/specified
+$: hdiutil attach /path/to/disk/image  
+$: mount -t fusefs_hfs /dev/disk# /specify/a/mount/point  
+\#where disk# is the value that hdiutil reports  
+\#And I can safely unmount the volume with just:  
+$: umount /mount/point/you/specified  
 
 --------------------------------
 ### Status 7/15/2014
