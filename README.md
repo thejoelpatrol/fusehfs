@@ -15,7 +15,7 @@ The original fusehfs code was published under GPL v2, so this version's code is 
 
 As described in this thread on the Emaculation forum: http://www.emaculation.com/forum/viewtopic.php?f=7&t=8181&p=48333#p48333
 
-I'm able to make fusehfs work with FUSE for OS X, to an extent. My setup is as follows:
+I'm able to make fusehfs work with FUSE for OS X to an extent, with no modifications. My setup is as follows:
 
     •fusefs_hfs.fs is in /System/Library/Filesystems
     •/sbin/mount_fusefs_hfs is a symbolic link to /System/Library/Filesystems/fusefs_hfs.fs/Contents/Resources/fusefs_hfs
