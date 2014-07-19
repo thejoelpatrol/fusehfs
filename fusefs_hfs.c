@@ -24,7 +24,7 @@
 #include "fusefs_hfs.h"
 #include "log.h"
 
-//#define DEBUG 1
+//#define DEBUG
 
 #ifdef DEBUG
 #define dprintf(args...) printf(args)

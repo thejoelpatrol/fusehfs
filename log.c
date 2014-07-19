@@ -43,7 +43,7 @@ void log_invoking_command(int argc, char *argv[]) {
     time_t curr_time = time(NULL);
     char *current_time = ctime(&curr_time);
     current_time[strlen(current_time) - 1] = 0; // remove the \n at the end of the string
-    printf("%s -- invoked with argv: ", current_time);
+    printf("\n%s -- invoked with argv: ", current_time);
     for (int i = 0; i < argc; i++)
         printf("%s ", argv[i]);
     printf("\n");
@@ -59,6 +59,6 @@ void log_fuse_call(struct fuse_args *args) {
             buf[strlen(buf)] = ' ';
         }
     }
-    printf("Running fuse_main: fusemain(%d, %s)\n", args->argc, buf);
+    printf("Running fuse_main: fuse_main(%d, %s)\n", args->argc, buf);
     fflush(stdout);
 }

@@ -1,16 +1,18 @@
 fusehfs
 =======
 
-Goal: update [FuseHFS](http://namedfork.net/fusehfs) that works with [FUSE for OS X]()
+Goal: update [FuseHFS](http://namedfork.net/fusehfs) that works with [FUSE for OS X](https://osxfuse.github.io/)
 
-This FUSE module was designed for MacFUSE, which is no longer maintained and doesn't work on newer versions of OS X. The FUSE for OS X (https://osxfuse.github.io) project picked up the FUSE-on-Mac baton, so that's the way to go from now on. Apple is nothing if not willing to drop support for outdated technologies, so Macs running OS X 10.6 onward can't write to HFS volumes. Evening reading seems to be broken as of 10.9, if not earlier.
+This FUSE module was designed for MacFUSE, which is no longer maintained and doesn't work on newer versions of OS X. The FUSE for OS X (https://osxfuse.github.io) project picked up the FUSE-on-Mac baton, so that's the way to go from now on. Apple is nothing if not willing to drop support for outdated technologies, so Macs running OS X 10.6 onward can't write to HFS volumes. Even reading seems to be broken as of 10.9.
 
 The original fusehfs code was published under GPL v2, so this version's code is too.
 
 --------------------------------
 #### Status 7/19/2014
 
-The problem is the [-oallow-other option](https://code.google.com/p/macfuse/wiki/OPTIONS). This option can only be used by privileged users. On older systems, fusehfs did in fact run as root, but apparently osxfuse (or something in 10.9) has changed this, which is for the better. It seems to me that users who are in group 80 should have been able to use this option, but evidently not. Group 80 (admin) is the default "MacFUSE admin" and "OSXFUSE admin" group, so FUSE should run as a member of this group, but it seems to prefer 20 (staff) for some reason. For now, leaving out this option will allow FuseHFS to work for the user who mounts the volume.
+The problem is the [-oallow-other option](https://code.google.com/p/macfuse/wiki/OPTIONS). This option can only be used by privileged users. On older systems, fusehfs did in fact run as root, but apparently osxfuse (or something in 10.9) has changed this, which is for the better. It seems to me that users who are in group 80 should have been able to use this option, but evidently not. Group 80 (admin) is the default "MacFUSE admin" and "OSXFUSE admin" group, so FUSE should run as a member of this group, but it seems to prefer 20 (staff) for some reason. For now, leaving out this option will allow FuseHFS to work for the user who mounts the volume. 
+
+I changed fusehfs to only attempt this option if the user is root. There might be a way to add this back in later for all users, but for now omitting this function for non-root users is better than not functioning at all.
 
 --------------------------------
 #### Status 7/18/2014

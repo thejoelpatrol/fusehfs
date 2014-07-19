@@ -5,11 +5,15 @@
  * Created by Zydeco on 27/2/2010.
  * Copyright 2010 namedfork.net. All rights reserved.
  *
+ * Edited by Joel Cretan 7/19/2014
+ * Still licensed under GPLv2
  */
 
 #include <osxfuse/fuse.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
+#include <unistd.h>
 #include <string.h>
 #include <iconv.h>
 #include <libhfs/hfs.h>
@@ -94,9 +98,15 @@ char * iconv_convert(const char *src, const char *from, const char *to) {
 	return out;
 }
 
+#define ROOT_UID 0
+static bool is_root() {
+    int euid = geteuid();
+    return euid == ROOT_UID;
+}
+
 
 int main(int argc, char* argv[], char* envp[], char** exec_path) {
-	int log = log_to_file();
+	int log = log_to_file(); // warning about unused variable occurs when DEBUG is not #defined
 #ifdef DEBUG
     log_invoking_command(argc, argv);
 #endif
@@ -138,18 +148,17 @@ int main(int argc, char* argv[], char* envp[], char** exec_path) {
 	free(volname);
     fuse_opt_add_arg(&args, volnameOption);
     fuse_opt_add_arg(&args, "-s");
-    //fuse_opt_add_arg(&args, "-d");
     fuse_opt_add_arg(&args, "-ofstypename=hfs");
-    //fuse_opt_add_arg(&args, "-olocal");
-	//fuse_opt_add_arg(&args, "-oallow_root");
-    //fuse_opt_add_arg(&args, "-oallow_other"); // this only works with root permissions
-	fuse_opt_add_arg(&args, "-odefer_permissions");
+    if (is_root()) fuse_opt_add_arg(&args, "-oallow_other"); // this option requires privileges
+    fuse_opt_add_arg(&args, "-odefer_permissions");
     char *fsnameOption = malloc(strlen(options.path)+10);
     strcpy(fsnameOption, "-ofsname=");
     strcat(fsnameOption, options.path);
     fuse_opt_add_arg(&args, fsnameOption);
     free(fsnameOption);
-	
+    //fuse_opt_add_arg(&args, "-debug");
+    //fuse_opt_add_arg(&args, "-olocal"); // experimental option. See: https://code.google.com/p/macfuse/wiki/OPTIONS
+    
 	// run fuse
 #ifdef DEBUG
     log_fuse_call(&args);
