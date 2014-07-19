@@ -26,10 +26,13 @@ I'm able to make fusehfs work with FUSE for OS X to an extent, with no modificat
 I can mount and unmount functional (read/write) HFS disk images from the shell, but definitely not using the graphical DiskImageMounter/DiskImages UI Agent/Disk Utility. These commands work for me:
 
 $: hdiutil attach /path/to/disk/image  
-$: mount -t fusefs_hfs /dev/disk# /specify/a/mount/point  
+$: mount -t fusefs_hfs -o nodev,noowners,nosuid /dev/disk# /specify/a/mount/point  
 \# where disk# is the value that hdiutil reports  
+\# this works fine without the -o options, but they are here for consistency with hdiutil
 \# And I can safely unmount the volume with just:  
 $: umount /mount/point/you/specified  
+
+Note that the call to hdiutil also includes a call to mount, which fails, but the subsequent call from the shell succeeds.
 
 --------------------------------
 #### Status 7/15/2014
@@ -41,4 +44,14 @@ The problem occurs within FUSE for OS X, not within any of the code of fusehfs i
 
 What's strange is that my workaround isn't subject to this. I can see that mount\_fusefs\_hfs is called with the same arguments by the same real/effective user and the exact same mount() call will work when mount_fusefs_hfs is called via my workaround, but not when mount\_fusefs\_hfs is called by double-clicking the disk image. Something must be different in the environment from which mount\_fusefs\_hfs is called, but I don't yet know what. I'm going to dig in to the [source to mount](https://opensource.apple.com/source/diskdev_cmds/diskdev_cmds-572.1.1/mount.tproj/mount.c) to see what it does before calling the filesystem-specific program (in our case, mount\_fusefs\_hfs).
 
-I'll also try to figure out how other filesystems like sshfs manage to mount in /Volumes without escalating to root. Requesting admin privileges from the user should work if all else fails, but that's really not a great option.
+I'll also try to figure out how other filesystems like sshfs manage to mount in /Volumes without escalating to root. Requesting privileges from the user should work if all else fails, but that's really not a great option.
+
+--------------------------------
+#### Status 7/18/2014
+
+
+The problem does not seem to lie within the mount program (the one that calls mount\_fusefs\_hfs, not the syscall). When called from the shell, which works, it receives the same arguments as when called by hdiutil, which does not work. Its execution appears to proceed in the same way within lldb, no matter where it is called from or if hdiutil is run by root. Its real and effective user IDs are the same both ways. If it is changing something that affects the eventual mount() syscall, I can't see what it is.
+
+The problem does not seem to be improper permissions on the mount point in /Volumes, or at least that's not the only problem. Running hdiutil as root does allow the critical mount() call (and everything else along the way) to work correctly, but simply adding read/write permissions to the mount point does not have the same effect. I used lldb to pause the various processes involved (hdiutil, mount, mount\_osxfusefs) at different points and tried setting permissions and then allowing them to continue, with no apparent effect. I also found that when *only* mount\_osxfusefs is run with an effective UID of root, the mount() call still does not work. So there is more to this failing syscall than meets the eye.
+
+
