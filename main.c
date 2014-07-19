@@ -16,8 +16,8 @@
 #include "fusefs_hfs.h"
 #include "log.h"
 
-#define FUSEHFS_VERSION "0.1.3"
-#define DEBUG
+#define FUSEHFS_VERSION "0.1.4"
+//#define DEBUG
 
 extern struct fuse_operations FuseHFS_operations;
 
@@ -142,7 +142,7 @@ int main(int argc, char* argv[], char* envp[], char** exec_path) {
     fuse_opt_add_arg(&args, "-ofstypename=hfs");
     //fuse_opt_add_arg(&args, "-olocal");
 	//fuse_opt_add_arg(&args, "-oallow_root");
-    fuse_opt_add_arg(&args, "-oallow_other");
+    //fuse_opt_add_arg(&args, "-oallow_other"); // this only works with root permissions
 	fuse_opt_add_arg(&args, "-odefer_permissions");
     char *fsnameOption = malloc(strlen(options.path)+10);
     strcpy(fsnameOption, "-ofsname=");
