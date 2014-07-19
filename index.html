@@ -1,0 +1,73 @@
+<!doctype html>
+<!-- The Time Machine GitHub pages theme was designed and developed by Jon Rohan, on Feb 7, 2012. -->
+<!-- Follow him for fun. http://twitter.com/jonrohan. Tail his code on http://github.com/jonrohan -->
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <link rel="stylesheet" href="stylesheets/stylesheet.css" media="screen"/>
+  <link rel="stylesheet" href="stylesheets/pygment_trac.css"/>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <script type="text/javascript" src="javascripts/script.js"></script>
+
+  <title>FuseHFS 0.1.4</title>
+  <meta name="description" content="Update of FuseHFS to run on OS X 10.9 with OSXFUSE (FUSE for OS X)">
+
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+</head>
+
+<body>
+
+  <div class="wrapper">
+    <header>
+      <h1 class="title">FuseHFS 0.1.4</h1>
+    </header>
+    <div id="container">
+      <p class="tagline">Update of FuseHFS to run on OS X 10.9 with OSXFUSE (FUSE for OS X)</p>
+      <div id="main" role="main">
+        <div class="download-bar">
+        <div class="inner">
+          <a href="https://github.com/thejoelpatrol/fusehfs/tarball/master" class="download-button tar"><span>Download</span></a>
+          <a href="https://github.com/thejoelpatrol/fusehfs/zipball/master" class="download-button zip"><span>Download</span></a>
+          <a href="https://github.com/thejoelpatrol/fusehfs" class="code">View FuseHFS 0.1.4 on GitHub</a>
+        </div>
+        <span class="blc"></span><span class="trc"></span>
+        </div>
+        <article class="markdown-body">
+          <p>Goal: update <a href="http://namedfork.net/fusehfs">FuseHFS</a> that works with <a href="https://osxfuse.github.io/">FUSE for OS X</a></p>
+
+<p>This FUSE module was designed for MacFUSE, which is no longer maintained and doesn't work on newer versions of OS X. The <a href="https://osxfuse.github.io">FUSE for OS X</a> project picked up the FUSE-on-Mac baton, so that's the way to go from now on. Apple is nothing if not willing to drop support for outdated technologies, so Macs running OS X 10.6 onward can't write to HFS volumes. Even reading seems to be broken as of 10.9.</p>
+
+<p>The original fusehfs code was published under GPL v2, so this version's code is too.</p>
+
+<hr><h4>
+<a name="status-7192014" class="anchor" href="#status-7192014"><span class="octicon octicon-link"></span></a>Status 7/19/2014</h4>
+
+<p>The problem in v0.1.3 that prevents it from working with OSXFUSE on 10.9 is the <a href="https://code.google.com/p/macfuse/wiki/OPTIONS">-oallow-other option</a>. This option can only be used by privileged users. On older systems, fusehfs did in fact run as root, but apparently OSXFUSE (or something in 10.9) has changed this, which is for the better. It seems to me that users who are in group 80 should have been able to use this option, but evidently not. Group 80 (admin) is the default "MacFUSE admin" and "OSXFUSE admin" group, so FUSE should run as a member of this group, but it seems to prefer 20 (staff) for some reason. For now, leaving out this option will allow FuseHFS to work for the user who mounts the volume. </p>
+
+<p>I changed fusehfs to only attempt this option if the user is root. There might be a way to add this back in later for all users, but for now omitting this function for non-root users is better than not functioning at all.</p>
+        </article>
+      </div>
+    </div>
+    <footer>
+      <div class="owner">
+      <p><a href="https://github.com/thejoelpatrol" class="avatar"><img src="https://avatars2.githubusercontent.com/u/5752950?s=60" width="48" height="48"/></a> <a href="https://github.com/thejoelpatrol">thejoelpatrol</a> maintains <a href="https://github.com/thejoelpatrol/fusehfs">FuseHFS 0.1.4</a></p>
+
+
+      </div>
+      <div class="creds">
+        <small>This page generated using <a href="http://pages.github.com/">GitHub Pages</a><br/>theme by <a href="https://twitter.com/jonrohan/">Jon Rohan</a></small>
+      </div>
+    </footer>
+  </div>
+  <div class="current-section">
+    <a href="#top">Scroll to top</a>
+    <a href="https://github.com/thejoelpatrol/fusehfs/tarball/master" class="tar">tar</a><a href="https://github.com/thejoelpatrol/fusehfs/zipball/master" class="zip">zip</a><a href="" class="code">source code</a>
+    <p class="name"></p>
+  </div>
+
+  
+</body>
+</html>
