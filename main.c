@@ -158,7 +158,7 @@ int main(int argc, char* argv[], char* envp[], char** exec_path) {
     free(fsnameOption);
     //fuse_opt_add_arg(&args, "-debug");
     //fuse_opt_add_arg(&args, "-olocal"); // experimental option. See: https://code.google.com/p/macfuse/wiki/OPTIONS
-    
+     
 	// run fuse
 #ifdef DEBUG
     log_fuse_call(&args);
