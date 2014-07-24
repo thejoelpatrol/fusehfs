@@ -6,7 +6,7 @@
  * Copyright 2010 namedfork.net. All rights reserved.
  *
  * Edited by Joel Cretan 7/19/2014
- * Still licensed under GPLv2
+ * Still licensed under GPLv2: https://www.gnu.org/licenses/gpl-2.0.html
  */
 
 #include <osxfuse/fuse.h>
@@ -18,12 +18,15 @@
 #include <iconv.h>
 #include <libhfs/hfs.h>
 #include "fusefs_hfs.h"
-#include "log.h"
 
 #define FUSEHFS_VERSION "0.1.4"
 //#define DEBUG
 
 extern struct fuse_operations FuseHFS_operations;
+extern int log_to_file();
+extern void log_invoking_command(int argc, char *argv[]);
+extern void log_fuse_call(struct fuse_args *args);
+
 
 struct fusehfs_options options = {
     .path =         NULL,
@@ -106,9 +109,11 @@ static bool is_root() {
 
 
 int main(int argc, char* argv[], char* envp[], char** exec_path) {
-	int log = log_to_file(); // warning about unused variable occurs when DEBUG is not #defined
 #ifdef DEBUG
+	int log = log_to_file();
     log_invoking_command(argc, argv);
+#else
+    log_to_file();
 #endif
     struct fuse_args args = FUSE_ARGS_INIT(argc, argv);
 	

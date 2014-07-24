@@ -4,6 +4,7 @@
 //
 //  Created by Joel Cretan on 7/8/14.
 //
+//  Licensed under GPLv2: https://www.gnu.org/licenses/gpl-2.0.html
 //
 
 #include <stdio.h>
@@ -21,7 +22,7 @@
 int log_to_file() {
     char logpath[PATH_MAX];
     char *home = getpwuid(getuid())->pw_dir;
-    if (strlen(home) + strlen(LOGPATH) > PATH_MAX)
+    if (strlen(home) + strlen(LOGPATH) >= PATH_MAX)
         return -1;
     strcpy(logpath, home);
     strcat(logpath, LOGPATH);
@@ -34,7 +35,6 @@ int log_to_file() {
         fprintf(stderr, "stdout dup2 errno: %d\n", errno);
     if (dup2(log, STDERR_FILENO) < 0)
         fprintf(stderr, "stderr dup2 errno: %d\n", errno);
-    
     fflush(stderr);
     return log;
 }
