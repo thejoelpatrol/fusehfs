@@ -22,7 +22,7 @@
 
   <div class="wrapper">
     <header>
-      <h1 class="title">FuseHFS 0.1.4</h1>
+      <h1 class="title">FuseHFS for OSXFUSE</h1>
     </header>
     <div id="container">
       <p class="tagline">Update of FuseHFS to run on OS X 10.9 with OSXFUSE (FUSE for OS X)</p>
@@ -31,21 +31,28 @@
         <div class="inner">
           <a href="https://github.com/thejoelpatrol/fusehfs/tarball/master" class="download-button tar"><span>Download</span></a>
           <a href="https://github.com/thejoelpatrol/fusehfs/zipball/master" class="download-button zip"><span>Download</span></a>
+          <a href="https://github.com/thejoelpatrol/fusehfs/Releases/FuseHFS-0.1.4b.pkg" class="download-button pkg"><span>Download</span></a>
           <a href="https://github.com/thejoelpatrol/fusehfs" class="code">View FuseHFS 0.1.4 on GitHub</a>
         </div>
         <span class="blc"></span><span class="trc"></span>
         </div>
         <article class="markdown-body">
-          <p>Goal: update <a href="http://namedfork.net/fusehfs">FuseHFS</a> that works with <a href="https://osxfuse.github.io/">FUSE for OS X</a></p>
+          <p>An update to <a href="http://namedfork.net/fusehfs">FuseHFS</a> to work with <a href="https://osxfuse.github.io/">FUSE for OS X</a></p>
 
-<p>This FUSE module was designed for MacFUSE, which is no longer maintained and doesn't work on newer versions of OS X. The <a href="https://osxfuse.github.io">FUSE for OS X</a> project picked up the FUSE-on-Mac baton, so that's the way to go from now on. Apple is nothing if not willing to drop support for outdated technologies, so Macs running OS X 10.6 onward can't write to HFS volumes. Even reading seems to be broken as of 10.9.</p>
+<p>Apple is nothing if not willing to drop support for outdated technologies, so Macs running OS X 10.6 onward can't write to HFS standard volumes. Reading should still work as of 10.9, but it would be unwise to rely on Apple continuing to support this. Thus the need for FuseHFS.</p>
+<p>The previous release of this FUSE module was designed for MacFUSE, which is no longer maintained and doesn't work on newer versions of OS X. The <a href="https://osxfuse.github.io">FUSE for OS X</a> project picked up the FUSE-on-Mac baton, so that's the way to go from now on. The original FuseHFS code was published under GPL v2, which is maintained for this version.</p>
 
-<p>The original fusehfs code was published under GPL v2, so this version's code is too.</p>
+<hr><h4>
+<a name="release-of-0.1.4-beta" class="anchor" href="#release-of-0.1.4-beta"><span class="octicon octicon-link"></span></a>7/28/2014: Release of 0.1.4 beta</h4>
+
+<p><a href="Releases/FuseHFS-0.1.4b.pkg">Download FuseHFS 0.1.4 beta</a></p>
+<p>This version should work with OSXFUSE 2.6.0 or later, on OS X 10.6 or later. However, only a few configurations have been tested. As such, please note this <span style="color:red"><em>WARNING! This is beta software.</em></span> It has been tested on several configurations, but your system may be different, and there may be special uses that have not been tested. Back up any important data before use! It would be good to read the <a href="http://namedfork.net/fusehfs">notes about the original version</a> before using this one. Submit bug reports to <a href="mailto:joel [(at]) macpaint.org">joel [(at]) macpaint.org</a></p>
+<p>Thanks to <a href="http://namedfork.net">Jesús Álvarez</a> for writing FuseHFS originally and releasing it as open source. This version is just a bug fix, so we are still indebted to him for the original.</p>
 
 <hr><h4>
 <a name="status-7192014" class="anchor" href="#status-7192014"><span class="octicon octicon-link"></span></a>Status 7/19/2014</h4>
 
-<p>The problem is the <a href="https://code.google.com/p/macfuse/wiki/OPTIONS">-oallow_other</a> option. This option can only be used by privileged users. On older systems, the program mount_fusefs did in fact run as root, but now mount_osxfusefs does not, which is for the better. It seems to me that users who are in group 80 should have been able to use this option, but evidently not. Group 80 (admin) is the default "MacFUSE admin" and "OSXFUSE admin" group, so FUSE should run as a member of this group, but it seems to prefer 20 (staff) for some reason. My understanding of the option may be wrong anyway, if wheel is actually required. For now, leaving out this option will allow FuseHFS to work for the user who mounts the volume. Considering the somewhat niche use of this filesystem these days, this is probably OK for now.</p>
+<p>The problem with 0.1.3 is the <a href="https://code.google.com/p/macfuse/wiki/OPTIONS">-oallow_other</a> option. This option can only be used by privileged users. On older systems, the program mount_fusefs did in fact run as root, but now mount_osxfusefs does not, which is for the better. It seems to me that users who are in group 80 should have been able to use this option, but evidently not. Group 80 (admin) is the default "MacFUSE admin" and "OSXFUSE admin" group, so FUSE should run as a member of this group, but it seems to prefer 20 (staff) for some reason. My understanding of the option may be wrong anyway, if wheel is actually required. For now, leaving out this option will allow FuseHFS to work for the user who mounts the volume. Considering the somewhat niche use of this filesystem these days, this is probably OK for now.</p>
 
 <p>I changed fusehfs (specifically, mount_fusefs_hfs) to only attempt this option if the user is root. There might be a way to add this back in later for all users, but for now omitting this function for non-root users is better than not functioning at all. </p>
         </article>

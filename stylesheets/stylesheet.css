@@ -448,7 +448,7 @@ a:hover {
 
 h1.title {
   margin: 30px 20px 10px;
-  font-size: 60px;
+  font-size: 48px;
   font-weight: bold;
   font-style: italic;
   font-family:Georgia, serif;
@@ -623,6 +623,19 @@ a.zip span {
 a.tar,
 a.tar span {
   background: transparent url(../images/tar.png) no-repeat 0 0;
+  width: 30px;
+  height: 21px;
+  display: inline-block;
+  text-indent: -10000px;
+  opacity: 0.8;
+  filter:alpha(opacity=80);  /* IE 5-7 */
+  transition: opacity ease-in-out 0.3s;
+  -webkit-transition: opacity ease-in-out 0.3s;  /* Safari <=6.1, Android <= 4.3 */
+}
+
+a.pkg,
+a.pkg span {
+  background: transparent url(../images/pkg.png) no-repeat 0 0;
   width: 30px;
   height: 21px;
   display: inline-block;
