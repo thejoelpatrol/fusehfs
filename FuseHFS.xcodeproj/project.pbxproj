@@ -42,6 +42,7 @@
 		28E2E031114964A5002DF364 /* fusefs_hfs.util in CopyFiles */ = {isa = PBXBuildFile; fileRef = 28E2E02111496478002DF364 /* fusefs_hfs.util */; };
 		28E2E033114964B1002DF364 /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = 28E72DB6114956C700084372 /* util.c */; };
 		28E72DD61149586900084372 /* libhfs.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 289FB8D9113BE43300409A62 /* libhfs.a */; };
+		5D41D08B197B0DA2007A4650 /* log.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D41D089197B0DA2007A4650 /* log.c */; };
 		FFD708650EE669A60026C014 /* fusefs_hfs.c in Sources */ = {isa = PBXBuildFile; fileRef = FFD708640EE669A60026C014 /* fusefs_hfs.c */; };
 		FFD708760EE66DA70026C014 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = FFD708750EE66DA70026C014 /* main.c */; };
 /* End PBXBuildFile section */
@@ -346,6 +347,7 @@
 		28F0DF051139382400C3718A /* version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = version.h; sourceTree = "<group>"; };
 		28F0DF061139382400C3718A /* xhfs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xhfs.h; sourceTree = "<group>"; };
 		28F0DF071139382400C3718A /* xhfs.tcl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = xhfs.tcl; sourceTree = "<group>"; };
+		5D41D089197B0DA2007A4650 /* log.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = log.c; sourceTree = "<group>"; };
 		639BA9851675AA9E00A9518F /* fuse_wait copy */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "fuse_wait copy"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8DD76FB20486AB0100D96B5E /* fusefs_hfs */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = fusefs_hfs; sourceTree = BUILT_PRODUCTS_DIR; };
 		FFD708640EE669A60026C014 /* fusefs_hfs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fusefs_hfs.c; sourceTree = "<group>"; };
@@ -416,6 +418,7 @@
 		08FB7795FE84155DC02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				5D41D089197B0DA2007A4650 /* log.c */,
 				FFD708640EE669A60026C014 /* fusefs_hfs.c */,
 				28B5BB7811B548D400FF8BC7 /* fusefs_hfs.h */,
 				FFD708750EE66DA70026C014 /* main.c */,
@@ -994,6 +997,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5D41D08B197B0DA2007A4650 /* log.c in Sources */,
 				FFD708650EE669A60026C014 /* fusefs_hfs.c in Sources */,
 				FFD708760EE66DA70026C014 /* main.c in Sources */,
 			);
@@ -1101,7 +1105,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 			};
 			name = Debug;
 		};
@@ -1111,7 +1115,7 @@
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 			};
 			name = Release;
 		};
@@ -1211,6 +1215,7 @@
 		28E72DAB1149551200084372 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALTERNATE_OWNER = "";
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
@@ -1223,8 +1228,9 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				GENERATE_PKGINFO_FILE = YES;
 				INFOPLIST_FILE = "fusefs_hfs-Info.plist";
-				INSTALL_GROUP = wheel;
-				INSTALL_OWNER = root;
+				INSTALL_GROUP = admin;
+				INSTALL_OWNER = "";
+				"INSTALL_OWNER[sdk=*]" = root;
 				INSTALL_PATH = /System/Library/Filesystems;
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -1240,9 +1246,11 @@
 		28E72DAC1149551200084372 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALTERNATE_GROUP = admin;
+				ALTERNATE_OWNER = "";
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = YES;
+				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEPLOYMENT_LOCATION = NO;
 				DSTROOT = "/tmp/$(PROJECT_NAME).dst";
@@ -1251,8 +1259,8 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				GENERATE_PKGINFO_FILE = YES;
 				INFOPLIST_FILE = "fusefs_hfs-Info.plist";
-				INSTALL_GROUP = wheel;
-				INSTALL_OWNER = root;
+				INSTALL_GROUP = admin;
+				INSTALL_OWNER = "";
 				INSTALL_PATH = /System/Library/Filesystems;
 				OTHER_LDFLAGS = (
 					"-framework",
