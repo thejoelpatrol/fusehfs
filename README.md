@@ -12,6 +12,11 @@ The original fusehfs code was published under GPL v2, so this version's code is 
 See the [project page](https://thejoelpatrol.github.io/fusehfs/)
 
 --------------------------------
+#### Status 1/3/2022
+
+We're discussing in the Issue #2 whether we can make fusehfs work again on macOS 12 Monterey now that HFS support is removed entirely by Apple, and whether long-term functionality will require using the [File Provider API](https://developer.apple.com/documentation/fileprovider) now that kexts are deprecated.
+
+--------------------------------
 #### Status 7/19/2014
 
 The problem is the [-oallow-other option](https://code.google.com/p/macfuse/wiki/OPTIONS). This option can only be used by privileged users. On older systems, the program mount\_fusefs did in fact run as root, but now mount\_osxfusefs does not, which is for the better. It seems to me that users who are in group 80 should have been able to use this option, but evidently not. Group 80 (admin) is the default "MacFUSE admin" and "OSXFUSE admin" group, so FUSE should run as a member of this group, but it seems to prefer 20 (staff) for some reason. My understanding of the option may be wrong anyway, if wheel is actually required. For now, leaving out this option will allow FuseHFS to work for the user who mounts the volume. Considering the somewhat niche use of this filesystem these days, this is probably OK for now.
