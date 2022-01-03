@@ -1,7 +1,7 @@
 fusehfs
 =======
 
-Goal: update [FuseHFS](http://namedfork.net/fusehfs) to work with [macFUSE](https://osxfuse.github.io/) on macOS 12.
+Goal: update [FuseHFS](http://namedfork.net/fusehfs) to provide R/W HFS support with [macFUSE](https://osxfuse.github.io/) on macOS 12
 
 The original fusehfs code was published under GPL v2, so this version's code is too.
 
