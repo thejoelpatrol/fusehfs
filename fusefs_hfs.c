@@ -7,8 +7,9 @@
  *
  * Licensed under GPLv2: https://www.gnu.org/licenses/gpl-2.0.html
  */
+#include "common.h"
 
-#include <osxfuse/fuse.h>
+#include <fuse/fuse.h>
 #include <string.h>
 #include <errno.h>
 #include <stdio.h>
@@ -22,10 +23,11 @@
 #include <assert.h>
 #include <libkern/OSByteOrder.h>
 #include <sys/xattr.h>
+
 #include "fusefs_hfs.h"
 #include "log.h"
 
-//#define DEBUG
+#define FILENAME "[fusefs_hfs.c]\t"
 
 #ifdef DEBUG
 #define dprintf(args...) printf(args)

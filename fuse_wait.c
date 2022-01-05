@@ -42,6 +42,7 @@
 #include <stdlib.h> // for realpath
 #include <CoreFoundation/CoreFoundation.h>
 
+#include "common.h"
 #define VERSION "20090819"
 
 #define FUSE_LISTEN_OBJECT "com.google.filesystems.fusefs.unotifications"

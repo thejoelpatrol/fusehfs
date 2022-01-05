@@ -8,6 +8,7 @@
  * Edited by Joel Cretan 7/19/2014
  * Still licensed under GPLv2: https://www.gnu.org/licenses/gpl-2.0.html
  */
+#include "common.h"
 
 #include <fuse/fuse.h>
 #include <stdlib.h>
@@ -17,16 +18,14 @@
 #include <string.h>
 #include <iconv.h>
 #include <libhfs/hfs.h>
-#include "fusefs_hfs.h"
 
+#include "fusefs_hfs.h"
+#include "log.h"
+
+#define FILENAME "[main.c]\t"
 #define FUSEHFS_VERSION "0.1.5"
-#define DEBUG
 
 extern struct fuse_operations FuseHFS_operations;
-extern int log_to_file();
-extern void log_invoking_command(int argc, char *argv[]);
-extern void log_fuse_call(struct fuse_args *args);
-
 
 struct fusehfs_options options = {
     .path =         NULL,
@@ -50,6 +49,19 @@ static struct fuse_opt FuseHFS_opts[] = {
 	FUSE_OPT_KEY("--readonly",	KEY_READONLY),
 	FUSE_OPT_END
 };
+
+static void log_fuse_call(struct fuse_args *args) {
+    char buf[1024];
+    for (int i = 0; i < args->argc; i++) {
+        if (strlen(buf) + strlen(args->argv[i]) + 1 <= 1024) {
+            strcat(buf, args->argv[i]);
+            buf[strlen(buf) + 1] = 0;
+            buf[strlen(buf)] = ' ';
+        }
+    }
+    printf(FILENAME "Running fuse_main: fuse_main(%d, %s)\n", args->argc, buf);
+    fflush(stdout);
+}
 
 static int FuseHFS_opt_proc(void *data, const char *arg, int key, struct fuse_args *outargs) {
 	switch (key) {

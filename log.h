@@ -9,10 +9,11 @@
 #ifndef _log_h
 #define _log_h
 
-#define DEBUG
+#include "common.h"
+
+#define LOGPATH "/Library/Logs/fusehfs.log"
 
 int log_to_file();
 void log_invoking_command(int argc, char *argv[]);
-void log_fuse_call(struct fuse_args *args);
 
 #endif /* _log_h */

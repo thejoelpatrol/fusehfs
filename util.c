@@ -17,12 +17,17 @@
 #include <iconv.h>
 #include <sys/errno.h>
 
+#include "common.h"
+#include "log.h"
+
+#define FILENAME "[util.c]\t"
+
 /* no longer supported in xnu 3247 / osx 10.11  */
 /* from xnu/bsd/sys/loadable_fs.h.auto.html     */
 #define    FSUC_INITIALIZE        'i'    /* initialize FS */
 
 int usage() {
-	fprintf(stderr, "usage: fusefs_hfs.util [-p|-m|-i] <options>\n");
+	fprintf(stderr, FILENAME "usage: fusefs_hfs.util [-p|-m|-i] <options>\n");
 	return EXIT_FAILURE;
 }
 
@@ -50,7 +55,7 @@ int probe (const char *device, int removable, int readonly) {
 	} else {
 		hfsvolent ent;
 		if (hfs_vstat(vol, &ent) == 0)
-			printf("%s\n", ent.name); // TODO: convert to UTF8
+			printf(FILENAME "%s\n", ent.name); // TODO: convert to UTF8
 	}
 	hfs_umount(vol);
 	return ret;
@@ -83,15 +88,24 @@ int mount (const char *device, const char *mountpoint) {
 	return ret?FSUR_IO_FAIL:FSUR_IO_SUCCESS;
 }
 
-int main (int argc, char * argv[], char * envp[], char * apple[]) {	
+int main (int argc, char * argv[], char * envp[], char * apple[]) {
+#ifdef DEBUG
+    int log = log_to_file();
+    log_invoking_command(argc, argv);
+#else
+    log_to_file();
+#endif
+    
 	// check arguments
 	if (argc < 3) return usage();
 	int ret = 0;
 	switch (argv[1][1]) {
 		case FSUC_PROBE:
+            dprintf(log, FILENAME "probing\n");
 			ret = probe(argv[2], !strcmp(argv[3],DEVICE_REMOVABLE), !strcmp(argv[4],DEVICE_READONLY));
 			break;
 		case FSUC_INITIALIZE: {
+            dprintf(log, FILENAME "initializing\n");
 			int larg = 2;
 			const char *label, *device;
 			if (strcmp(argv[2], "-v") == 0) larg = 3;
@@ -100,6 +114,7 @@ int main (int argc, char * argv[], char * envp[], char * apple[]) {
 			ret = initialize(device, label);
 			break; }
 		case FSUC_MOUNT:
+            dprintf(log, FILENAME "mounting\n");
 			ret = mount(argv[argc-2], argv[argc-1]);
 			break;
 		case 'k': // get UUID
@@ -110,5 +125,6 @@ int main (int argc, char * argv[], char * envp[], char * apple[]) {
 			ret = FSUR_INVAL;
 			break;
 	}
+    vdprintf(log, FILENAME "returning %d\n", ret);
 	return ret;
 }

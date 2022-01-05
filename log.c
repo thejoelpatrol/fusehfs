@@ -6,6 +6,7 @@
 //
 //  Licensed under GPLv2: https://www.gnu.org/licenses/gpl-2.0.html
 //
+#include "common.h"
 
 #include <stdio.h>
 #include <fcntl.h>
@@ -15,9 +16,8 @@
 #include <time.h>
 #include <pwd.h>
 #include <limits.h>
-#include <fuse/fuse.h>
 
-#define LOGPATH "/Library/Logs/fusehfs.log"
+#include "log.h"
 
 int log_to_file() {
     char logpath[PATH_MAX];
@@ -47,18 +47,5 @@ void log_invoking_command(int argc, char *argv[]) {
     for (int i = 0; i < argc; i++)
         printf("%s ", argv[i]);
     printf("\n");
-    fflush(stdout);
-}
-
-void log_fuse_call(struct fuse_args *args) {
-    char buf[1024];
-    for (int i = 0; i < args->argc; i++) {
-        if (strlen(buf) + strlen(args->argv[i]) + 1 <= 1024) {
-            strcat(buf, args->argv[i]);
-            buf[strlen(buf) + 1] = 0;
-            buf[strlen(buf)] = ' ';
-        }
-    }
-    printf("Running fuse_main: fuse_main(%d, %s)\n", args->argc, buf);
     fflush(stdout);
 }
