@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		283BD8AC1149985C003F9F55 /* mount_fusefs_hfs in CopyFiles */ = {isa = PBXBuildFile; fileRef = 283BD8A6114997EB003F9F55 /* mount_fusefs_hfs */; };
 		2842B7D711AFC0100031D3AE /* libfuse_ino64.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2842B7D611AFC0100031D3AE /* libfuse_ino64.dylib */; };
 		2861C557113A706600D0447F /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2861C556113A706600D0447F /* libiconv.dylib */; };
 		286A10A411AF17D7001EEF69 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2861C556113A706600D0447F /* libiconv.dylib */; };
@@ -27,7 +26,6 @@
 		289FB925113BE5CE00409A62 /* libhfs.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 289FB8D9113BE43300409A62 /* libhfs.a */; };
 		289FB936113BE62200409A62 /* hfs.c in Sources */ = {isa = PBXBuildFile; fileRef = 28F0DEBE1139382300C3718A /* hfs.c */; };
 		28A3D9C0122C570A00A7869C /* fuse_wait.c in Sources */ = {isa = PBXBuildFile; fileRef = 28A3D9B6122C56F700A7869C /* fuse_wait.c */; };
-		28A3D9C1122C570D00A7869C /* fuse_wait in Resources */ = {isa = PBXBuildFile; fileRef = 28A3D9BA122C56FD00A7869C /* fuse_wait */; };
 		28A3D9C9122C577900A7869C /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28A3D9C8122C577900A7869C /* CoreFoundation.framework */; };
 		28E2DF7F11495919002DF364 /* ck_btree.c in Sources */ = {isa = PBXBuildFile; fileRef = 28F0DE6B1139382300C3718A /* ck_btree.c */; };
 		28E2DF8011495919002DF364 /* ck_mdb.c in Sources */ = {isa = PBXBuildFile; fileRef = 28F0DE6D1139382300C3718A /* ck_mdb.c */; };
@@ -35,14 +33,18 @@
 		28E2DF8211495919002DF364 /* hfsck.c in Sources */ = {isa = PBXBuildFile; fileRef = 28F0DE711139382300C3718A /* hfsck.c */; };
 		28E2DF8311495919002DF364 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 28F0DE731139382300C3718A /* main.c */; };
 		28E2DF8411495919002DF364 /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = 28F0DE761139382300C3718A /* util.c */; };
-		28E2DF93114959B2002DF364 /* fusefs_hfs in Resources */ = {isa = PBXBuildFile; fileRef = 8DD76FB20486AB0100D96B5E /* fusefs_hfs */; };
 		28E2DF9B11495B01002DF364 /* suid.c in Sources */ = {isa = PBXBuildFile; fileRef = 28F0DEF91139382300C3718A /* suid.c */; };
 		28E2DF9C11495B01002DF364 /* version.c in Sources */ = {isa = PBXBuildFile; fileRef = 28F0DF041139382400C3718A /* version.c */; };
 		28E2E0251149647E002DF364 /* libhfs.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 289FB8D9113BE43300409A62 /* libhfs.a */; };
-		28E2E031114964A5002DF364 /* fusefs_hfs.util in CopyFiles */ = {isa = PBXBuildFile; fileRef = 28E2E02111496478002DF364 /* fusefs_hfs.util */; };
+		28E2E031114964A5002DF364 /* fusefs_hfs.util in CopyFiles */ = {isa = PBXBuildFile; fileRef = 28E2E02111496478002DF364 /* fusefs_hfs.util */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		28E2E033114964B1002DF364 /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = 28E72DB6114956C700084372 /* util.c */; };
 		28E72DD61149586900084372 /* libhfs.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 289FB8D9113BE43300409A62 /* libhfs.a */; };
 		5D41D08B197B0DA2007A4650 /* log.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D41D089197B0DA2007A4650 /* log.c */; };
+		5DA0E4AA278383AC00368F1F /* log.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DA0E4A9278383AC00368F1F /* log.h */; };
+		5DA0E4AB2784155600368F1F /* fusefs_hfs in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8DD76FB20486AB0100D96B5E /* fusefs_hfs */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		5DA0E4AC2784156700368F1F /* fuse_wait in CopyFiles */ = {isa = PBXBuildFile; fileRef = 28A3D9BA122C56FD00A7869C /* fuse_wait */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		5DA0E4AD278416C800368F1F /* mount_fusefs_hfs in Resources */ = {isa = PBXBuildFile; fileRef = 283BD8A6114997EB003F9F55 /* mount_fusefs_hfs */; };
+		5DA0E4AE278424A500368F1F /* hfsck in CopyFiles */ = {isa = PBXBuildFile; fileRef = 28E72DD01149585D00084372 /* hfsck */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		FFD708650EE669A60026C014 /* fusefs_hfs.c in Sources */ = {isa = PBXBuildFile; fileRef = FFD708640EE669A60026C014 /* fusefs_hfs.c */; };
 		FFD708760EE66DA70026C014 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = FFD708750EE66DA70026C014 /* main.c */; };
 /* End PBXBuildFile section */
@@ -104,9 +106,11 @@
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
-			dstSubfolderSpec = 1;
+			dstSubfolderSpec = 6;
 			files = (
-				283BD8AC1149985C003F9F55 /* mount_fusefs_hfs in CopyFiles */,
+				5DA0E4AE278424A500368F1F /* hfsck in CopyFiles */,
+				5DA0E4AC2784156700368F1F /* fuse_wait in CopyFiles */,
+				5DA0E4AB2784155600368F1F /* fusefs_hfs in CopyFiles */,
 				28E2E031114964A5002DF364 /* fusefs_hfs.util in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -348,6 +352,7 @@
 		28F0DF061139382400C3718A /* xhfs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xhfs.h; sourceTree = "<group>"; };
 		28F0DF071139382400C3718A /* xhfs.tcl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = xhfs.tcl; sourceTree = "<group>"; };
 		5D41D089197B0DA2007A4650 /* log.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = log.c; sourceTree = "<group>"; };
+		5DA0E4A9278383AC00368F1F /* log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = log.h; sourceTree = "<group>"; };
 		639BA9851675AA9E00A9518F /* fuse_wait copy */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "fuse_wait copy"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8DD76FB20486AB0100D96B5E /* fusefs_hfs */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = fusefs_hfs; sourceTree = BUILT_PRODUCTS_DIR; };
 		FFD708640EE669A60026C014 /* fusefs_hfs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fusefs_hfs.c; sourceTree = "<group>"; };
@@ -419,6 +424,7 @@
 			isa = PBXGroup;
 			children = (
 				5D41D089197B0DA2007A4650 /* log.c */,
+				5DA0E4A9278383AC00368F1F /* log.h */,
 				FFD708640EE669A60026C014 /* fusefs_hfs.c */,
 				28B5BB7811B548D400FF8BC7 /* fusefs_hfs.h */,
 				FFD708750EE66DA70026C014 /* main.c */,
@@ -756,6 +762,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				286A118211AF26C6001EEF69 /* bootblocks.h in Headers */,
+				5DA0E4AA278383AC00368F1F /* log.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -896,6 +903,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = 08FB7794FE84155DC02AAC07 /* HFSLives */;
@@ -918,8 +926,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				28A3D9C1122C570D00A7869C /* fuse_wait in Resources */,
-				28E2DF93114959B2002DF364 /* fusefs_hfs in Resources */,
+				5DA0E4AD278416C800368F1F /* mount_fusefs_hfs in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1061,6 +1068,7 @@
 					"\"$(SRCROOT)/hfsutils-3.2.6/libhfs\"",
 					"\"/usr/local/lib\"",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 12.1;
 				OTHER_CFLAGS = (
 					"-D_FILE_OFFSET_BITS=64",
 					"-D__DARWIN_64_BIT_INO_T=1",
@@ -1087,6 +1095,7 @@
 					"\"$(SRCROOT)/hfsutils-3.2.6/libhfs\"",
 					"\"/usr/local/lib\"",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 12.1;
 				OTHER_CFLAGS = (
 					"-D_FILE_OFFSET_BITS=64",
 					"-D__DARWIN_64_BIT_INO_T=1",
@@ -1101,21 +1110,21 @@
 		1DEB928A08733DD80010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = x86_64;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 12.1;
 			};
 			name = Debug;
 		};
 		1DEB928B08733DD80010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = x86_64;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 12.1;
 			};
 			name = Release;
 		};
@@ -1219,6 +1228,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 0.1.5;
 				DEPLOYMENT_LOCATION = NO;
 				DSTROOT = "/tmp/$(PROJECT_NAME).dst";
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -1231,7 +1241,8 @@
 				INSTALL_GROUP = admin;
 				INSTALL_OWNER = "";
 				"INSTALL_OWNER[sdk=*]" = root;
-				INSTALL_PATH = /System/Library/Filesystems;
+				INSTALL_PATH = /Library/Filesystems;
+				MARKETING_VERSION = 0.1.5;
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -1251,6 +1262,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 0.1.5;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEPLOYMENT_LOCATION = NO;
 				DSTROOT = "/tmp/$(PROJECT_NAME).dst";
@@ -1261,7 +1273,8 @@
 				INFOPLIST_FILE = "fusefs_hfs-Info.plist";
 				INSTALL_GROUP = admin;
 				INSTALL_OWNER = "";
-				INSTALL_PATH = /System/Library/Filesystems;
+				INSTALL_PATH = /Library/Filesystems;
+				MARKETING_VERSION = 0.1.5;
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
