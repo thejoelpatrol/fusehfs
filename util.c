@@ -17,15 +17,20 @@
 #include <iconv.h>
 #include <sys/errno.h>
 
+/* no longer supported in xnu 3247 / osx 10.11  */
+/* from xnu/bsd/sys/loadable_fs.h.auto.html     */
+#define    FSUC_INITIALIZE        'i'    /* initialize FS */
+
 int usage() {
 	fprintf(stderr, "usage: fusefs_hfs.util [-p|-m|-i] <options>\n");
 	return EXIT_FAILURE;
 }
 
-int have_macfuse() {
+// TODO: this is old
+/*int have_macfuse() {
 	struct stat us;
 	return (stat("/usr/local/lib/libfuse_ino64.dylib", &us) == 0);
-}
+}*/
 
 #define HFSPLUS_SIGWORD	0x482b /* 'H+' */
 #define HFSX_SIGWORD	0x482b /* 'HX' */

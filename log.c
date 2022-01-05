@@ -15,7 +15,7 @@
 #include <time.h>
 #include <pwd.h>
 #include <limits.h>
-#include <osxfuse/fuse.h>
+#include <fuse/fuse.h>
 
 #define LOGPATH "/Library/Logs/fusehfs.log"
 
