@@ -103,6 +103,7 @@ int main (int argc, char * argv[], char * envp[], char * apple[]) {
 		case FSUC_PROBE:
             dprintf(log, FILENAME "probing\n");
 			ret = probe(argv[2], !strcmp(argv[3],DEVICE_REMOVABLE), !strcmp(argv[4],DEVICE_READONLY));
+            //fflush(log);
 			break;
 		case FSUC_INITIALIZE: {
             dprintf(log, FILENAME "initializing\n");
@@ -125,6 +126,6 @@ int main (int argc, char * argv[], char * envp[], char * apple[]) {
 			ret = FSUR_INVAL;
 			break;
 	}
-    vdprintf(log, FILENAME "returning %d\n", ret);
+    dprintf(log, FILENAME "returning %d\n", ret);
 	return ret;
 }
