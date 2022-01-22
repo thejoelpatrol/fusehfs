@@ -32,10 +32,10 @@ int usage() {
 }
 
 // TODO: this is old
-/*int have_macfuse() {
+int have_macfuse() {
 	struct stat us;
-	return (stat("/usr/local/lib/libfuse_ino64.dylib", &us) == 0);
-}*/
+	return (stat("/usr/local/lib/libfuse.dylib", &us) == 0);
+}
 
 #define HFSPLUS_SIGWORD	0x482b /* 'H+' */
 #define HFSX_SIGWORD	0x482b /* 'HX' */
@@ -82,8 +82,8 @@ int initialize (const char *device, const char *label) {
 
 int mount (const char *device, const char *mountpoint) {
 	char *cmd;
-	asprintf(&cmd, "/System/Library/Filesystems/fusefs_hfs.fs/Contents/Resources/fuse_wait \"%s\" %d /System/Library/Filesystems/fusefs_hfs.fs/Contents/Resources/fusefs_hfs \"%s\" \"%s\"", mountpoint, 5, device, mountpoint);
-	int ret = system(cmd);
+	asprintf(&cmd, "/Library/Filesystems/fusefs_hfs.fs/Contents/Resources/fuse_wait \"%s\" %d /Library/Filesystems/fusefs_hfs.fs/Contents/Resources/fusefs_hfs \"%s\" \"%s\"", mountpoint, 5, device, mountpoint);
+	int ret = system(cmd); // TODO: escape input to avoid command injection
 	free(cmd);
 	return ret?FSUR_IO_FAIL:FSUR_IO_SUCCESS;
 }

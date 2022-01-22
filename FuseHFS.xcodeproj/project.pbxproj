@@ -7,9 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2842B7D711AFC0100031D3AE /* libfuse_ino64.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2842B7D611AFC0100031D3AE /* libfuse_ino64.dylib */; };
-		2861C557113A706600D0447F /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2861C556113A706600D0447F /* libiconv.dylib */; };
-		286A10A411AF17D7001EEF69 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2861C556113A706600D0447F /* libiconv.dylib */; };
 		286A118211AF26C6001EEF69 /* bootblocks.h in Headers */ = {isa = PBXBuildFile; fileRef = 286A118111AF26C6001EEF69 /* bootblocks.h */; };
 		2883E887114974030057A7DC /* suid.c in Sources */ = {isa = PBXBuildFile; fileRef = 28F0DEF91139382300C3718A /* suid.c */; };
 		289FB8E2113BE47600409A62 /* block.c in Sources */ = {isa = PBXBuildFile; fileRef = 28F0DEB01139382300C3718A /* block.c */; };
@@ -39,6 +36,9 @@
 		28E2E033114964B1002DF364 /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = 28E72DB6114956C700084372 /* util.c */; };
 		28E72DD61149586900084372 /* libhfs.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 289FB8D9113BE43300409A62 /* libhfs.a */; };
 		5D41D08B197B0DA2007A4650 /* log.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D41D089197B0DA2007A4650 /* log.c */; };
+		5D559F09279BAABC006F44CA /* libfuse.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D559F08279BAABC006F44CA /* libfuse.2.dylib */; };
+		5D559F0B279BAD91006F44CA /* libiconv.2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D559F0A279BAD91006F44CA /* libiconv.2.tbd */; };
+		5D559F0C279BADA2006F44CA /* libiconv.2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D559F0A279BAD91006F44CA /* libiconv.2.tbd */; };
 		5DA0E4AA278383AC00368F1F /* log.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DA0E4A9278383AC00368F1F /* log.h */; };
 		5DA0E4AD278416C800368F1F /* mount_fusefs_hfs in Resources */ = {isa = PBXBuildFile; fileRef = 283BD8A6114997EB003F9F55 /* mount_fusefs_hfs */; };
 		5DB628D527860ADE00FCDEE2 /* log.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D41D089197B0DA2007A4650 /* log.c */; };
@@ -356,6 +356,8 @@
 		28F0DF061139382400C3718A /* xhfs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xhfs.h; sourceTree = "<group>"; };
 		28F0DF071139382400C3718A /* xhfs.tcl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = xhfs.tcl; sourceTree = "<group>"; };
 		5D41D089197B0DA2007A4650 /* log.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = log.c; sourceTree = "<group>"; };
+		5D559F08279BAABC006F44CA /* libfuse.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libfuse.2.dylib; path = ../../../../usr/local/lib/libfuse.2.dylib; sourceTree = "<group>"; };
+		5D559F0A279BAD91006F44CA /* libiconv.2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.2.tbd; path = usr/lib/libiconv.2.tbd; sourceTree = SDKROOT; };
 		5DA0E4A9278383AC00368F1F /* log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = log.h; sourceTree = "<group>"; };
 		5DB628D42786069B00FCDEE2 /* common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
 		5DB628D727860C6200FCDEE2 /* libfuse_ino64.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libfuse_ino64.2.dylib; path = ../../../../usr/local/lib/libfuse_ino64.2.dylib; sourceTree = "<group>"; };
@@ -385,7 +387,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				286A10A411AF17D7001EEF69 /* libiconv.dylib in Frameworks */,
+				5D559F0C279BADA2006F44CA /* libiconv.2.tbd in Frameworks */,
 				28E2E0251149647E002DF364 /* libhfs.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -402,9 +404,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2861C557113A706600D0447F /* libiconv.dylib in Frameworks */,
+				5D559F0B279BAD91006F44CA /* libiconv.2.tbd in Frameworks */,
+				5D559F09279BAABC006F44CA /* libfuse.2.dylib in Frameworks */,
 				289FB925113BE5CE00409A62 /* libhfs.a in Frameworks */,
-				2842B7D711AFC0100031D3AE /* libfuse_ino64.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -765,6 +767,8 @@
 		5DB628D627860C6200FCDEE2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				5D559F0A279BAD91006F44CA /* libiconv.2.tbd */,
+				5D559F08279BAABC006F44CA /* libfuse.2.dylib */,
 				5DB628D727860C6200FCDEE2 /* libfuse_ino64.2.dylib */,
 			);
 			name = Frameworks;
