@@ -31,7 +31,6 @@ int usage() {
 	return EXIT_FAILURE;
 }
 
-// TODO: this is old
 int have_macfuse() {
 	struct stat us;
 	return (stat("/usr/local/lib/libfuse.dylib", &us) == 0);
@@ -80,13 +79,15 @@ int initialize (const char *device, const char *label) {
 	return EXIT_SUCCESS;
 }
 
-int mount (const char *device, const char *mountpoint) {
+/*int mount (const char *device, const char *mountpoint) {
 	char *cmd;
 	asprintf(&cmd, "/Library/Filesystems/fusefs_hfs.fs/Contents/Resources/fuse_wait \"%s\" %d /Library/Filesystems/fusefs_hfs.fs/Contents/Resources/fusefs_hfs \"%s\" \"%s\"", mountpoint, 5, device, mountpoint);
-	int ret = system(cmd); // TODO: escape input to avoid command injection
+    fprintf(stderr, FILENAME "mount cmd: %s", cmd);
+    fflush(stderr);
+    int ret = system(cmd); // TODO: escape input to avoid command injection
 	free(cmd);
 	return ret?FSUR_IO_FAIL:FSUR_IO_SUCCESS;
-}
+}*/
 
 int main (int argc, char * argv[], char * envp[], char * apple[]) {
 #ifdef DEBUG
@@ -101,12 +102,14 @@ int main (int argc, char * argv[], char * envp[], char * apple[]) {
 	int ret = 0;
 	switch (argv[1][1]) {
 		case FSUC_PROBE:
-            dprintf(log, FILENAME "probing\n");
+            fprintf(stderr, FILENAME "probing\n");
+            fflush(stderr);
 			ret = probe(argv[2], !strcmp(argv[3],DEVICE_REMOVABLE), !strcmp(argv[4],DEVICE_READONLY));
             //fflush(log);
 			break;
 		case FSUC_INITIALIZE: {
-            dprintf(log, FILENAME "initializing\n");
+            fprintf(stderr, FILENAME "initializing\n");
+            fflush(stderr);
 			int larg = 2;
 			const char *label, *device;
 			if (strcmp(argv[2], "-v") == 0) larg = 3;
@@ -114,10 +117,11 @@ int main (int argc, char * argv[], char * envp[], char * apple[]) {
 			device = argv[larg+1];
 			ret = initialize(device, label);
 			break; }
-		case FSUC_MOUNT:
-            dprintf(log, FILENAME "mounting\n");
+		/*case FSUC_MOUNT:
+            fprintf(stderr, FILENAME "mounting\n");
+            fflush(stderr);
 			ret = mount(argv[argc-2], argv[argc-1]);
-			break;
+			break;*/
 		case 'k': // get UUID
 		case 's': // set UUID
 			ret = FSUR_INVAL;

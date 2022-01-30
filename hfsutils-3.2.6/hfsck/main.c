@@ -32,6 +32,9 @@
 # include "../suid.h"
 # include "../version.h"
 
+#include <fcntl.h>
+#include <unistd.h>
+
 int options;
 
 extern int optind;
@@ -59,6 +62,14 @@ int main(int argc, char *argv[])
   int nparts, pnum, result;
   hfsvol vol;
 
+    int log = open("/tmp/hfsck.log", O_WRONLY | O_APPEND | O_CREAT);
+    dprintf(log, "hfsck invoked with args: ");
+    for (int i = 0; i < argc; i++) {
+        dprintf(log, "%s ", argv[i]);
+    }
+    dprintf(log, "\n");
+    close(log);
+    
   suid_init();
 
   if (argc == 2)
@@ -82,7 +93,7 @@ int main(int argc, char *argv[])
     {
       int opt;
 
-      opt = getopt(argc, argv, "vna");
+      opt = getopt(argc, argv, "vnaqy");
       if (opt == EOF)
 	break;
 
@@ -102,8 +113,20 @@ int main(int argc, char *argv[])
 	case 'a':
 	  options |= HFSCK_YES;
 	  break;
+    
+    // these are actually probably the main options we care about for fusehfs
+    // they are the ones passed by macOS
+    // q: quick check whether volume was unmounted cleanly
+    // y: always try to repair any damage found
+    // see: $ man fsck_hfs
+    case 'q':
+      options &= ~HFSCK_REPAIR;
+      break;
+    case 'y':
+      options |= HFSCK_REPAIR;
+      break;
 	}
-    }
+  }
 
   if (argc - optind < 1 ||
       argc - optind > 2)
