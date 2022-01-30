@@ -59,8 +59,8 @@ static void log_fuse_call(struct fuse_args *args) {
             buf[strlen(buf)] = ' ';
         }
     }
-    printf(FILENAME "Running fuse_main: fuse_main(%d, %s)\n", args->argc, buf);
-    fflush(stdout);
+    fprintf(stderr, FILENAME "Running fuse_main: fuse_main(%d, %s)\n", args->argc, buf);
+    fflush(stderr);
 }
 
 static int FuseHFS_opt_proc(void *data, const char *arg, int key, struct fuse_args *outargs) {
@@ -78,10 +78,10 @@ static int FuseHFS_opt_proc(void *data, const char *arg, int key, struct fuse_ar
 			}
 			return 1;
 		case KEY_VERSION:
-			printf("FuseHFS %s, (c)2010 namedfork.net namedfork.net\n", FUSEHFS_VERSION);
+			fprintf(stderr, "FuseHFS %s, (c)2010 namedfork.net namedfork.net\n", FUSEHFS_VERSION);
 			exit(1);
 		case KEY_HELP:
-			printf("usage: fusefs_hfs [fuse options] device mountpoint\n");
+			fprintf(stderr, "usage: fusefs_hfs [fuse options] device mountpoint\n");
 			exit(0);
 		case KEY_READONLY:
 			options.readonly = 1;
@@ -121,12 +121,9 @@ static bool is_root() {
 
 
 int main(int argc, char* argv[], char* envp[], char** exec_path) {
-#ifdef DEBUG
-	int log = log_to_file();
+	log_to_file();
     log_invoking_command(argc, argv);
-#else
-    log_to_file();
-#endif
+
     struct fuse_args args = FUSE_ARGS_INIT(argc, argv);
 	
 	bzero(&options, sizeof options);
@@ -177,19 +174,19 @@ int main(int argc, char* argv[], char* envp[], char** exec_path) {
     //fuse_opt_add_arg(&args, "-olocal"); // experimental option. See: https://code.google.com/p/macfuse/wiki/OPTIONS
      
 	// run fuse
-#ifdef DEBUG
+//#ifdef DEBUG
     log_fuse_call(&args);
-#endif
+//#endif
 	int ret = fuse_main(args.argc, args.argv, &FuseHFS_operations, &options);
 	
 	//free(options.path);
 	//free(options.encoding);
 	//fuse_opt_free_args(&args);
-#ifdef DEBUG
+//#ifdef DEBUG
     char *macfuse_mode = getenv("OSXFUSE_MACFUSE_MODE");
-    dprintf(log, "MacFUSE mode: %s\n", macfuse_mode);
-    dprintf(log, "Quitting fusefs_hfs, returning %d\n\n", ret);
-    fflush(stdout);
-#endif
+    fprintf(stderr, "MacFUSE mode: %s\n", macfuse_mode);
+    fprintf(stderr, "Quitting fusefs_hfs, returning %d\n\n", ret);
+    fflush(stderr);
+//#endif
     return ret;
 }

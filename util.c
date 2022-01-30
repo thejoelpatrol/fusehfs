@@ -54,7 +54,8 @@ int probe (const char *device, int removable, int readonly) {
 	} else {
 		hfsvolent ent;
 		if (hfs_vstat(vol, &ent) == 0)
-			printf(FILENAME "%s\n", ent.name); // TODO: convert to UTF8
+            // WARNING!! apparently stdout is a pipe!!!
+			printf("%s\n", ent.name); // TODO: convert to UTF8
 	}
 	hfs_umount(vol);
 	return ret;
@@ -90,12 +91,9 @@ int initialize (const char *device, const char *label) {
 }*/
 
 int main (int argc, char * argv[], char * envp[], char * apple[]) {
-#ifdef DEBUG
-    int log = log_to_file();
-    log_invoking_command(argc, argv);
-#else
     log_to_file();
-#endif
+    log_invoking_command(argc, argv);
+
     
 	// check arguments
 	if (argc < 3) return usage();
@@ -130,6 +128,6 @@ int main (int argc, char * argv[], char * envp[], char * apple[]) {
 			ret = FSUR_INVAL;
 			break;
 	}
-    dprintf(log, FILENAME "returning %d\n", ret);
+    fprintf(stderr, FILENAME "returning %d\n", ret);
 	return ret;
 }

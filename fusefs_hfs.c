@@ -466,7 +466,6 @@ void * FuseHFS_init(struct fuse_conn_info *conn) {
 	//char logfn[128];
 	//sprintf(logfn, "/fusefs_hfs/FuseHFS.%d.log", getpid());
 	//stderr = freopen(logfn, "a", stderr);
-    log_to_file();
 	fprintf(stderr, "FuseHFS_init\n");
 	fflush(stderr);
 #endif

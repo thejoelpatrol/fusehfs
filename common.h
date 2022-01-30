@@ -9,6 +9,6 @@
 #define fusehfs_common_h
 
 #define FUSE_USE_VERSION 26
-#define DEBUG
+//#define DEBUG
 
 #endif /* common_h */
