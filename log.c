@@ -19,9 +19,11 @@
 
 #include "log.h"
 
+#define MAC_FIRST_USER 501
+
 int log_to_file() {
     char logpath[PATH_MAX];
-    char *home = getpwuid(getuid())->pw_dir;
+    char *home = getpwuid(MAC_FIRST_USER)->pw_dir;
     if (strlen(home) + strlen(LOGPATH) >= PATH_MAX)
         return -1;
     strcpy(logpath, home);

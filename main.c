@@ -24,6 +24,7 @@
 
 #define FILENAME "[main.c]\t"
 #define FUSEHFS_VERSION "0.1.5"
+#define DEBUG
 
 extern struct fuse_operations FuseHFS_operations;
 
@@ -171,22 +172,19 @@ int main(int argc, char* argv[], char* envp[], char** exec_path) {
     fuse_opt_add_arg(&args, fsnameOption);
     free(fsnameOption);
     //fuse_opt_add_arg(&args, "-debug");
-    //fuse_opt_add_arg(&args, "-olocal"); // experimental option. See: https://code.google.com/p/macfuse/wiki/OPTIONS
+    fuse_opt_add_arg(&args, "-olocal"); // full effect uncertain, but necessary to display it at as a local drive
+                                        // rather than a server, which assures better unmounting (fully ejecting disk image)
+                                        // https://github.com/osxfuse/osxfuse/wiki/Mount-options
      
 	// run fuse
-//#ifdef DEBUG
     log_fuse_call(&args);
-//#endif
-	int ret = fuse_main(args.argc, args.argv, &FuseHFS_operations, &options);
-	
-	//free(options.path);
-	//free(options.encoding);
-	//fuse_opt_free_args(&args);
-//#ifdef DEBUG
     char *macfuse_mode = getenv("OSXFUSE_MACFUSE_MODE");
     fprintf(stderr, "MacFUSE mode: %s\n", macfuse_mode);
+
+	int ret = fuse_main(args.argc, args.argv, &FuseHFS_operations, &options);
+	
+    // these don't print...macFUSE must mess with stderr?
     fprintf(stderr, "Quitting fusefs_hfs, returning %d\n\n", ret);
     fflush(stderr);
-//#endif
     return ret;
 }

@@ -96,7 +96,7 @@
 			<key>FSRepairExecutable</key>
 			<string>hfsck</string>
 			<key>FSVerificationArguments</key>
-			<string>-fn</string>
+			<string>-q</string>
 			<key>FSVerificationExecutable</key>
 			<string>hfsck</string>
 		</dict>

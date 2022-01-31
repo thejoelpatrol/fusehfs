@@ -29,4 +29,6 @@ done
 
 echo "mount_fusefs_hfs script running" >> ~/Library/Logs/fusehfs.log
 
-/Library/Filesystems/fusefs_hfs.fs/Contents/Resources/fuse_wait "${MOUNTPOINT}" 5 /Library/Filesystems/fusefs_hfs.fs/Contents/Resources/fusefs_hfs "${DEVICE_ARG}" "${MOUNTPOINT}"
+#/Library/Filesystems/fusefs_hfs.fs/Contents/Resources/fuse_wait "${MOUNTPOINT}" 5 /Library/Filesystems/fusefs_hfs.fs/Contents/Resources/fusefs_hfs "${DEVICE_ARG}" "${MOUNTPOINT}"
+
+/Library/Filesystems/fusefs_hfs.fs/Contents/Resources/fusefs_hfs "${DEVICE_ARG}" "${MOUNTPOINT}"
