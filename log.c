@@ -13,6 +13,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/errno.h>
+#include <sys/stat.h>
 #include <time.h>
 #include <pwd.h>
 #include <limits.h>
@@ -20,15 +21,30 @@
 #include "log.h"
 
 #define MAC_FIRST_USER 501
+#define MEGABYTE 1 << 20
 
 int log_to_file() {
     char logpath[PATH_MAX];
+    
+    // you can't write to /Library any more, so use ~/Library instead
     char *home = getpwuid(MAC_FIRST_USER)->pw_dir;
     if (strlen(home) + strlen(LOGPATH) >= PATH_MAX)
         return -1;
-    strcpy(logpath, home);
+    strncpy(logpath, home, sizeof(logpath));
     strcat(logpath, LOGPATH);
+    
+    // delete old log if larger than 1MB so it doesn't get out of control
+    // if we can't...that's probably fine.
+    struct stat st;
+    int rc = stat(logpath, &st);
+    if (rc == 0) {
+        if (st.st_size > MEGABYTE) {
+            unlink(logpath);
+        }
+    }
+    
     int log = open(logpath, O_CREAT | O_WRONLY | O_APPEND, S_IRUSR | S_IWUSR);
+    chown(logpath, MAC_FIRST_USER, -1); // it's inconvenient for root, the owner of this process, to own the log
     if (log < 0) {
         fprintf(stderr, "open errno: %d\n", errno);
         return log;
