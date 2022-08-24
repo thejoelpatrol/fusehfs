@@ -22,8 +22,6 @@
 		289FB908113BE52E00409A62 /* os.c in Sources */ = {isa = PBXBuildFile; fileRef = 289FB906113BE52700409A62 /* os.c */; };
 		289FB925113BE5CE00409A62 /* libhfs.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 289FB8D9113BE43300409A62 /* libhfs.a */; };
 		289FB936113BE62200409A62 /* hfs.c in Sources */ = {isa = PBXBuildFile; fileRef = 28F0DEBE1139382300C3718A /* hfs.c */; };
-		28A3D9C0122C570A00A7869C /* fuse_wait.c in Sources */ = {isa = PBXBuildFile; fileRef = 28A3D9B6122C56F700A7869C /* fuse_wait.c */; };
-		28A3D9C9122C577900A7869C /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28A3D9C8122C577900A7869C /* CoreFoundation.framework */; };
 		28E2DF7F11495919002DF364 /* ck_btree.c in Sources */ = {isa = PBXBuildFile; fileRef = 28F0DE6B1139382300C3718A /* ck_btree.c */; };
 		28E2DF8011495919002DF364 /* ck_mdb.c in Sources */ = {isa = PBXBuildFile; fileRef = 28F0DE6D1139382300C3718A /* ck_mdb.c */; };
 		28E2DF8111495919002DF364 /* ck_volume.c in Sources */ = {isa = PBXBuildFile; fileRef = 28F0DE6F1139382300C3718A /* ck_volume.c */; };
@@ -44,7 +42,6 @@
 		5DB628D527860ADE00FCDEE2 /* log.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D41D089197B0DA2007A4650 /* log.c */; };
 		5DB628DA278614B800FCDEE2 /* fusefs_hfs.util in Resources */ = {isa = PBXBuildFile; fileRef = 28E2E02111496478002DF364 /* fusefs_hfs.util */; };
 		5DB628DB2786157700FCDEE2 /* fusefs_hfs in Resources */ = {isa = PBXBuildFile; fileRef = 8DD76FB20486AB0100D96B5E /* fusefs_hfs */; };
-		5DB628DC2786158400FCDEE2 /* fuse_wait in Resources */ = {isa = PBXBuildFile; fileRef = 28A3D9BA122C56FD00A7869C /* fuse_wait */; };
 		5DB628DD2786158C00FCDEE2 /* hfsck in Resources */ = {isa = PBXBuildFile; fileRef = 28E72DD01149585D00084372 /* hfsck */; };
 		FFD708650EE669A60026C014 /* fusefs_hfs.c in Sources */ = {isa = PBXBuildFile; fileRef = FFD708640EE669A60026C014 /* fusefs_hfs.c */; };
 		FFD708760EE66DA70026C014 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = FFD708750EE66DA70026C014 /* main.c */; };
@@ -64,13 +61,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 289FB8D8113BE43300409A62;
 			remoteInfo = hfs;
-		};
-		28A3D9BE122C570400A7869C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 28A3D9B9122C56FD00A7869C;
-			remoteInfo = fuse_wait;
 		};
 		28E2E0261149648B002DF364 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -140,7 +130,6 @@
 		289FB8D9113BE43300409A62 /* libhfs.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libhfs.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		289FB906113BE52700409A62 /* os.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = os.c; sourceTree = "<group>"; };
 		28A3D9B6122C56F700A7869C /* fuse_wait.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fuse_wait.c; sourceTree = "<group>"; };
-		28A3D9BA122C56FD00A7869C /* fuse_wait */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = fuse_wait; sourceTree = BUILT_PRODUCTS_DIR; };
 		28A3D9C8122C577900A7869C /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		28B5BB7811B548D400FF8BC7 /* fusefs_hfs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fusefs_hfs.h; sourceTree = "<group>"; };
 		28E2E02111496478002DF364 /* fusefs_hfs.util */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = fusefs_hfs.util; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -375,14 +364,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		28A3D9B8122C56FD00A7869C /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				28A3D9C9122C577900A7869C /* CoreFoundation.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		28E2E01F11496478002DF364 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -450,7 +431,6 @@
 				28E72DA91149551100084372 /* fusefs_hfs.fs */,
 				28E72DD01149585D00084372 /* hfsck */,
 				28E2E02111496478002DF364 /* fusefs_hfs.util */,
-				28A3D9BA122C56FD00A7869C /* fuse_wait */,
 				639BA9851675AA9E00A9518F /* fuse_wait copy */,
 			);
 			name = Products;
@@ -807,22 +787,6 @@
 			productReference = 289FB8D9113BE43300409A62 /* libhfs.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		28A3D9B9122C56FD00A7869C /* fuse_wait */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 28A3D9C4122C571500A7869C /* Build configuration list for PBXNativeTarget "fuse_wait" */;
-			buildPhases = (
-				28A3D9B7122C56FD00A7869C /* Sources */,
-				28A3D9B8122C56FD00A7869C /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = fuse_wait;
-			productName = fuse_wait;
-			productReference = 28A3D9BA122C56FD00A7869C /* fuse_wait */;
-			productType = "com.apple.product-type.tool";
-		};
 		28E2E02011496478002DF364 /* fusefs_hfs.util */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 28E2E02F1149649D002DF364 /* Build configuration list for PBXNativeTarget "fusefs_hfs.util" */;
@@ -851,7 +815,6 @@
 			);
 			dependencies = (
 				5DB628DF2786165C00FCDEE2 /* PBXTargetDependency */,
-				28A3D9BF122C570400A7869C /* PBXTargetDependency */,
 				28E2E0271149648B002DF364 /* PBXTargetDependency */,
 				28E72DB91149573500084372 /* PBXTargetDependency */,
 			);
@@ -935,7 +898,6 @@
 				28E72DCF1149585D00084372 /* hfsck */,
 				289FB8D8113BE43300409A62 /* hfs */,
 				28E2E02011496478002DF364 /* fusefs_hfs.util */,
-				28A3D9B9122C56FD00A7869C /* fuse_wait */,
 				28E72DA81149551100084372 /* FS Bundle */,
 				639BA97D1675AA9E00A9518F /* hfsutils */,
 			);
@@ -948,7 +910,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				5DB628DD2786158C00FCDEE2 /* hfsck in Resources */,
-				5DB628DC2786158400FCDEE2 /* fuse_wait in Resources */,
 				5DB628DB2786157700FCDEE2 /* fusefs_hfs in Resources */,
 				5DB628DA278614B800FCDEE2 /* fusefs_hfs.util in Resources */,
 				5DA0E4AD278416C800368F1F /* mount_fusefs_hfs in Resources */,
@@ -990,14 +951,6 @@
 				289FB8E9113BE47600409A62 /* record.c in Sources */,
 				289FB8EA113BE47600409A62 /* version.c in Sources */,
 				289FB8EB113BE47600409A62 /* volume.c in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		28A3D9B7122C56FD00A7869C /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				28A3D9C0122C570A00A7869C /* fuse_wait.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1048,11 +1001,6 @@
 			isa = PBXTargetDependency;
 			target = 289FB8D8113BE43300409A62 /* hfs */;
 			targetProxy = 289FB8DC113BE43A00409A62 /* PBXContainerItemProxy */;
-		};
-		28A3D9BF122C570400A7869C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 28A3D9B9122C56FD00A7869C /* fuse_wait */;
-			targetProxy = 28A3D9BE122C570400A7869C /* PBXContainerItemProxy */;
 		};
 		28E2E0271149648B002DF364 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1115,7 +1063,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_IDENTITY = "-";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
 				GCC_MODEL_TUNING = G5;
 				HEADER_SEARCH_PATHS = (
 					/usr/local/include,
@@ -1189,37 +1139,6 @@
 				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				PRODUCT_NAME = hfs;
 				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/hfsutils-3.2.6/libhfs";
-				ZERO_LINK = NO;
-			};
-			name = Release;
-		};
-		28A3D9BC122C56FD00A7869C /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				INSTALL_PATH = /usr/local/bin;
-				OTHER_CFLAGS = (
-					"-DDEBUG",
-					"-D__FreeBSD__=10",
-				);
-				PRODUCT_NAME = fuse_wait;
-			};
-			name = Debug;
-		};
-		28A3D9BD122C56FD00A7869C /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_MODEL_TUNING = G5;
-				INSTALL_PATH = /usr/local/bin;
-				OTHER_CFLAGS = "-D__FreeBSD__=10";
-				PRODUCT_NAME = fuse_wait;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -1299,11 +1218,13 @@
 				ALTERNATE_GROUP = admin;
 				ALTERNATE_OWNER = "";
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 0.1.5;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEPLOYMENT_LOCATION = NO;
+				DEVELOPMENT_TEAM = A744CMTBH5;
 				DSTROOT = "/tmp/$(PROJECT_NAME).dst";
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1345,8 +1266,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/bin;
 				OTHER_CFLAGS = "";
@@ -1413,15 +1336,6 @@
 			buildConfigurations = (
 				289FB8DA113BE43300409A62 /* Debug */,
 				289FB8DB113BE43300409A62 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		28A3D9C4122C571500A7869C /* Build configuration list for PBXNativeTarget "fuse_wait" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				28A3D9BC122C56FD00A7869C /* Debug */,
-				28A3D9BD122C56FD00A7869C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
