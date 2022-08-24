@@ -129,7 +129,6 @@
 		286A11C611AF2F21001EEF69 /* postinstall.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = postinstall.sh; sourceTree = "<group>"; };
 		289FB8D9113BE43300409A62 /* libhfs.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libhfs.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		289FB906113BE52700409A62 /* os.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = os.c; sourceTree = "<group>"; };
-		28A3D9B6122C56F700A7869C /* fuse_wait.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fuse_wait.c; sourceTree = "<group>"; };
 		28A3D9C8122C577900A7869C /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		28B5BB7811B548D400FF8BC7 /* fusefs_hfs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fusefs_hfs.h; sourceTree = "<group>"; };
 		28E2E02111496478002DF364 /* fusefs_hfs.util */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = fusefs_hfs.util; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -442,7 +441,6 @@
 				28E72DAA1149551100084372 /* fusefs_hfs-Info.plist */,
 				28E72DB6114956C700084372 /* util.c */,
 				283BD8A6114997EB003F9F55 /* mount_fusefs_hfs */,
-				28A3D9B6122C56F700A7869C /* fuse_wait.c */,
 			);
 			name = "FS Bundle";
 			sourceTree = "<group>";
