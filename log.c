@@ -33,19 +33,17 @@ int log_to_file() {
         fprintf(stderr, "open errno: %d\n", errno);
         return log;
     }
-    /*if (dup2(log, STDOUT_FILENO) < 0)
-        fprintf(stderr, "stdout dup2 errno: %d\n", errno);*/
     if (dup2(log, STDERR_FILENO) < 0)
         fprintf(stderr, "stderr dup2 errno: %d\n", errno);
     fflush(stderr);
     return log;
 }
 
-void log_invoking_command(int argc, char *argv[]) {
+void log_invoking_command(char *filename, int argc, char *argv[]) {
     time_t curr_time = time(NULL);
     char *current_time = ctime(&curr_time);
     current_time[strlen(current_time) - 1] = 0; // remove the \n at the end of the string
-    fprintf(stderr, "\n%s -- invoked with argv: ", current_time);
+    fprintf(stderr, "\n%s %s -- invoked with argv: ", filename, current_time);
     for (int i = 0; i < argc; i++)
         fprintf(stderr, "%s ", argv[i]);
     fprintf(stderr, "\n");

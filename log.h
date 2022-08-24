@@ -14,6 +14,6 @@
 #define LOGPATH "/Library/Logs/fusehfs.log"
 
 int log_to_file();
-void log_invoking_command(int argc, char *argv[]);
+void log_invoking_command(char *filename, int argc, char *argv[]);
 
 #endif /* _log_h */

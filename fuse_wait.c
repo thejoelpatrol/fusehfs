@@ -43,7 +43,9 @@
 #include <CoreFoundation/CoreFoundation.h>
 
 #include "common.h"
-#define VERSION "20090819"
+#include "log.h"
+#define VERSION "0.1.5"
+#define FILENAME "[fuse_wait.c]\t"
 
 #define FUSE_LISTEN_OBJECT "com.google.filesystems.fusefs.unotifications"
 #define FUSE_MOUNT_NOTIFICATION_NAME "com.google.filesystems.fusefs.unotifications.mounted"
@@ -55,11 +57,11 @@
 #define DEBUGMODE FALSE
 #endif
 
-#if DEBUGMODE
-#define LOG_DEBUG(...) do { FILE *debugFile = stderr; fprintf(debugFile, __VA_ARGS__); fflush(debugFile); } while(0)
-#else
+//#if DEBUGMODE
+#define LOG_DEBUG(...) do { FILE *debugFile = stderr; fprintf(debugFile, FILENAME __VA_ARGS__); fflush(debugFile); } while(0)
+/*#else
 #define LOG_DEBUG(...)
-#endif
+#endif*/
 
 #define MIN(X, Y) X < Y ? X : Y
 
@@ -185,6 +187,9 @@ static void PrintUsage(FILE *stream) {
 }
 
 int main(int argc, char** argv) {
+  log_to_file();
+  log_invoking_command(FILENAME, argc, argv);
+
   LOG_DEBUG("[Debug messages enabled]\n");
   if(argc < 4) {
     PrintUsage(stdout);
@@ -278,16 +283,15 @@ int main(int argc, char** argv) {
     LOG_DEBUG("Running run loop a long time...\n");
     CFStringRef mountPathSnapshot = NULL;
     while(mountPathSnapshot == NULL) {
-      int crlrimRetval = CFRunLoopRunInMode(kCFRunLoopDefaultMode, timeout, true);
+      int crlrimRetval = CFRunLoopRunInMode(kCFRunLoopDefaultMode, timeout, true); // sleep/yield, essentially
       LOG_DEBUG("Exited from run loop. Let's find out why... crlrimRetval: %d "
 		"(handled: %d)\n", crlrimRetval, kCFRunLoopRunHandledSource);
       mountPathSnapshot = mountPath; // Might have been modified during RunLoop.
       if(crlrimRetval != kCFRunLoopRunHandledSource) {
-	fprintf(stderr, "Did not receive a signal within %f seconds. "
-		"Exiting...\n", timeout);
-	return -2;
-      }
-      else if(mountPathSnapshot != NULL) {
+          fprintf(stderr, FILENAME "Did not receive a signal within %f seconds. "
+                  "Exiting...\n", timeout);
+          return -2;
+      } else if(mountPathSnapshot != NULL) {
 	LOG_DEBUG("mountPathSnapshot: %p\n", mountPathSnapshot);
 	
 	/*
@@ -372,7 +376,7 @@ int main(int argc, char** argv) {
       LOG_DEBUG("  childargv[%i]: \"%s\"\n", i, childargv[i]);
     
     execvp(mount_command, childargv);
-    fprintf(stderr, "Could not execute %s!\n", argv[3]);
+    fprintf(stderr, FILENAME "Could not execute %s!\n", argv[3]);
     return -1;
   }
 }

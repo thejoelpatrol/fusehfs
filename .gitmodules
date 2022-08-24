@@ -1,0 +1,3 @@
+[submodule "macos-installer-builder"]
+	path = macos-installer-builder
+	url = https://github.com/thejoelpatrol/macos-installer-builder

@@ -123,7 +123,7 @@ static bool is_root() {
 
 int main(int argc, char* argv[], char* envp[], char** exec_path) {
 	log_to_file();
-    log_invoking_command(argc, argv);
+    log_invoking_command(FILENAME, argc, argv);
 
     struct fuse_args args = FUSE_ARGS_INIT(argc, argv);
 	
@@ -179,12 +179,12 @@ int main(int argc, char* argv[], char* envp[], char** exec_path) {
 	// run fuse
     log_fuse_call(&args);
     char *macfuse_mode = getenv("OSXFUSE_MACFUSE_MODE");
-    fprintf(stderr, "MacFUSE mode: %s\n", macfuse_mode);
+    fprintf(stderr, FILENAME "MacFUSE mode: %s\n", macfuse_mode);
 
 	int ret = fuse_main(args.argc, args.argv, &FuseHFS_operations, &options);
-	
-    // these don't print...macFUSE must mess with stderr?
-    fprintf(stderr, "Quitting fusefs_hfs, returning %d\n\n", ret);
+	    
+    log_to_file(); // macFUSE apparently messes with stderr so you have to set this again
+    fprintf(stderr, FILENAME "Quitting fusefs_hfs, returning %d\n\n", ret);
     fflush(stderr);
     return ret;
 }

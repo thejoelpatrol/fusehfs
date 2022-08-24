@@ -92,7 +92,7 @@ int initialize (const char *device, const char *label) {
 
 int main (int argc, char * argv[], char * envp[], char * apple[]) {
     log_to_file();
-    log_invoking_command(argc, argv);
+    log_invoking_command(FILENAME, argc, argv);
 
     
 	// check arguments
@@ -103,7 +103,6 @@ int main (int argc, char * argv[], char * envp[], char * apple[]) {
             fprintf(stderr, FILENAME "probing\n");
             fflush(stderr);
 			ret = probe(argv[2], !strcmp(argv[3],DEVICE_REMOVABLE), !strcmp(argv[4],DEVICE_READONLY));
-            //fflush(log);
 			break;
 		case FSUC_INITIALIZE: {
             fprintf(stderr, FILENAME "initializing\n");
