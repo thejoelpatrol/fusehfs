@@ -38,10 +38,9 @@
 		5D559F0B279BAD91006F44CA /* libiconv.2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D559F0A279BAD91006F44CA /* libiconv.2.tbd */; };
 		5D559F0C279BADA2006F44CA /* libiconv.2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D559F0A279BAD91006F44CA /* libiconv.2.tbd */; };
 		5DA0E4AA278383AC00368F1F /* log.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DA0E4A9278383AC00368F1F /* log.h */; };
-		5DA0E4AD278416C800368F1F /* mount_fusefs_hfs in Resources */ = {isa = PBXBuildFile; fileRef = 283BD8A6114997EB003F9F55 /* mount_fusefs_hfs */; };
 		5DB628D527860ADE00FCDEE2 /* log.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D41D089197B0DA2007A4650 /* log.c */; };
 		5DB628DA278614B800FCDEE2 /* fusefs_hfs.util in Resources */ = {isa = PBXBuildFile; fileRef = 28E2E02111496478002DF364 /* fusefs_hfs.util */; };
-		5DB628DB2786157700FCDEE2 /* fusefs_hfs in Resources */ = {isa = PBXBuildFile; fileRef = 8DD76FB20486AB0100D96B5E /* fusefs_hfs */; };
+		5DB628DB2786157700FCDEE2 /* mount_fusefs_hfs in Resources */ = {isa = PBXBuildFile; fileRef = 8DD76FB20486AB0100D96B5E /* mount_fusefs_hfs */; };
 		5DB628DD2786158C00FCDEE2 /* hfsck in Resources */ = {isa = PBXBuildFile; fileRef = 28E72DD01149585D00084372 /* hfsck */; };
 		FFD708650EE669A60026C014 /* fusefs_hfs.c in Sources */ = {isa = PBXBuildFile; fileRef = FFD708640EE669A60026C014 /* fusefs_hfs.c */; };
 		FFD708760EE66DA70026C014 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = FFD708750EE66DA70026C014 /* main.c */; };
@@ -350,7 +349,7 @@
 		5DB628D42786069B00FCDEE2 /* common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
 		5DB628D727860C6200FCDEE2 /* libfuse_ino64.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libfuse_ino64.2.dylib; path = ../../../../usr/local/lib/libfuse_ino64.2.dylib; sourceTree = "<group>"; };
 		639BA9851675AA9E00A9518F /* fuse_wait copy */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "fuse_wait copy"; sourceTree = BUILT_PRODUCTS_DIR; };
-		8DD76FB20486AB0100D96B5E /* fusefs_hfs */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = fusefs_hfs; sourceTree = BUILT_PRODUCTS_DIR; };
+		8DD76FB20486AB0100D96B5E /* mount_fusefs_hfs */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mount_fusefs_hfs; sourceTree = BUILT_PRODUCTS_DIR; };
 		FFD708640EE669A60026C014 /* fusefs_hfs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fusefs_hfs.c; sourceTree = "<group>"; };
 		FFD708750EE66DA70026C014 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -424,7 +423,7 @@
 		1AB674ADFE9D54B511CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8DD76FB20486AB0100D96B5E /* fusefs_hfs */,
+				8DD76FB20486AB0100D96B5E /* mount_fusefs_hfs */,
 				289FB8D9113BE43300409A62 /* libhfs.a */,
 				28E72DA91149551100084372 /* fusefs_hfs.fs */,
 				28E72DD01149585D00084372 /* hfsck */,
@@ -853,9 +852,9 @@
 			productReference = 639BA9851675AA9E00A9518F /* fuse_wait copy */;
 			productType = "com.apple.product-type.tool";
 		};
-		8DD76FA90486AB0100D96B5E /* fusefs_hfs */ = {
+		8DD76FA90486AB0100D96B5E /* mount_fusefs_hfs */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1DEB928508733DD80010E9CD /* Build configuration list for PBXNativeTarget "fusefs_hfs" */;
+			buildConfigurationList = 1DEB928508733DD80010E9CD /* Build configuration list for PBXNativeTarget "mount_fusefs_hfs" */;
 			buildPhases = (
 				8DD76FAB0486AB0100D96B5E /* Sources */,
 				8DD76FAD0486AB0100D96B5E /* Frameworks */,
@@ -866,10 +865,10 @@
 			dependencies = (
 				289FB8DD113BE43A00409A62 /* PBXTargetDependency */,
 			);
-			name = fusefs_hfs;
+			name = mount_fusefs_hfs;
 			productInstallPath = "$(HOME)/bin";
 			productName = HFSLives;
-			productReference = 8DD76FB20486AB0100D96B5E /* fusefs_hfs */;
+			productReference = 8DD76FB20486AB0100D96B5E /* mount_fusefs_hfs */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -892,7 +891,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				8DD76FA90486AB0100D96B5E /* fusefs_hfs */,
+				8DD76FA90486AB0100D96B5E /* mount_fusefs_hfs */,
 				28E72DCF1149585D00084372 /* hfsck */,
 				289FB8D8113BE43300409A62 /* hfs */,
 				28E2E02011496478002DF364 /* fusefs_hfs.util */,
@@ -908,9 +907,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				5DB628DD2786158C00FCDEE2 /* hfsck in Resources */,
-				5DB628DB2786157700FCDEE2 /* fusefs_hfs in Resources */,
+				5DB628DB2786157700FCDEE2 /* mount_fusefs_hfs in Resources */,
 				5DB628DA278614B800FCDEE2 /* fusefs_hfs.util in Resources */,
-				5DA0E4AD278416C800368F1F /* mount_fusefs_hfs in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1007,7 +1005,7 @@
 		};
 		28E72DB91149573500084372 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 8DD76FA90486AB0100D96B5E /* fusefs_hfs */;
+			target = 8DD76FA90486AB0100D96B5E /* mount_fusefs_hfs */;
 			targetProxy = 28E72DB81149573500084372 /* PBXContainerItemProxy */;
 		};
 		28E72DD51149586700084372 /* PBXTargetDependency */ = {
@@ -1053,7 +1051,7 @@
 					"-DFUSE_USE_VERSION=26",
 				);
 				OTHER_LDFLAGS = "";
-				PRODUCT_NAME = fusefs_hfs;
+				PRODUCT_NAME = mount_fusefs_hfs;
 			};
 			name = Debug;
 		};
@@ -1082,7 +1080,7 @@
 					"-DFUSE_USE_VERSION=26",
 				);
 				OTHER_LDFLAGS = "";
-				PRODUCT_NAME = fusefs_hfs;
+				PRODUCT_NAME = mount_fusefs_hfs;
 			};
 			name = Release;
 		};
@@ -1313,7 +1311,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1DEB928508733DD80010E9CD /* Build configuration list for PBXNativeTarget "fusefs_hfs" */ = {
+		1DEB928508733DD80010E9CD /* Build configuration list for PBXNativeTarget "mount_fusefs_hfs" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB928608733DD80010E9CD /* Debug */,

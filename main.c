@@ -2,7 +2,7 @@
  * main.c
  * FuseHFS
  *
- * This is the entry point of fusefs_hfs.
+ * This is the entry point of mount_fusefs_hfs.
  *
  * Rough order of operations when double clicking a disk image:
  * . Finder opens file path with /System/Library/CoreServices/DiskImageMounter.app
@@ -30,7 +30,6 @@
  *      __DAMountWithArgumentsCallback(), __DAMountWithArgumentsCallbackStage1(), __DAMountWithArgumentsCallbackStage2()
  *      https://opensource.apple.com/source/DiskArbitration/DiskArbitration-342.80.2/diskarbitrationd/DAFileSystem.c.auto.html
  *      DAFileSystemMountWithArguments()
- * . mount_fusefs_hfs calls fusefs_hfs, whose main() is in this file
  * . main() uses hfs_mount() to check whether to mount readonly
  * . main() calls fuse_main(), which handles the rest of mounting and does not return until unmount
  * . macFUSE calls in to the struct fuse_operations FuseHFS_operations we gave it to handle all the actual HFS operations with the functions in fusefs_hfs.c
@@ -56,8 +55,8 @@
 #include <iconv.h>
 #include <libhfs/hfs.h>
 
-#include "fusefs_hfs.h"
 #include "log.h"
+#include "fusefs_hfs.h"
 
 #define FILENAME "[main.c]\t"
 #define FUSEHFS_VERSION "0.1.5"
