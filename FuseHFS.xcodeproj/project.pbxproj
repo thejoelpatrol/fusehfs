@@ -417,7 +417,6 @@
 				5DA0E4A9278383AC00368F1F /* log.h */,
 				FFD708640EE669A60026C014 /* fusefs_hfs.c */,
 				28B5BB7811B548D400FF8BC7 /* fusefs_hfs.h */,
-				FFD708750EE66DA70026C014 /* main.c */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -441,6 +440,7 @@
 				28E72DAA1149551100084372 /* fusefs_hfs-Info.plist */,
 				28E72DB6114956C700084372 /* util.c */,
 				283BD8A6114997EB003F9F55 /* mount_fusefs_hfs */,
+				FFD708750EE66DA70026C014 /* main.c */,
 			);
 			name = "FS Bundle";
 			sourceTree = "<group>";
