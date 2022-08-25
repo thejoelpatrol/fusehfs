@@ -2,10 +2,47 @@
  * main.c
  * FuseHFS
  *
+ * This is the entry point of fusefs_hfs.
+ *
+ * Rough order of operations when double clicking a disk image:
+ * . Finder opens file path with /System/Library/CoreServices/DiskImageMounter.app
+ * . DiskImageMounter opens image file RW
+ * . diskimagescontroller creates a device
+ * . diskimagescontroller asks diskimagesiod to attach the disk image to the device
+ * . the kernel loads macFUSE kext, if not already
+ * . diskarbitrationd becomes ready
+ * . diskimagescontroller and DiskImageMounter quit
+ * . diskarbitrationd learns that a disk device has appeared, keeps track of it, but calls it unreadable for now
+ *      _DAMediaAppearedCallback()
+ *      https://opensource.apple.com/source/DiskArbitration/DiskArbitration-342.140.1/diskarbitrationd/DAServer.c.auto.html
+ * . diskarbitrationd checks FS_DIR_LOCATION (/System/Library/Filesystems) for loadable filesystems
+ *      https://opensource.apple.com/source/DiskArbitration/DiskArbitration-342.140.1/diskarbitrationd/DASupport.c.auto.html
+ *      https://opensource.apple.com/source/xnu/xnu-7195.141.2/bsd/sys/loadable_fs.h.auto.html
+ * . diskarbitrationd checks ___FS_DEFAULT_DIR (/Library/Filesystems) for loadable filesystems
+ *      https://opensource.apple.com/source/DiskArbitration/DiskArbitration-342.140.1/diskarbitrationd/DABase.h.auto.html
+ * . diskarbitrationd uses the plist in every loadable fs to find its probe command and calls it
+ *      in our case, # fusefs_hfs.util -p
+ * . once a filesystem asserts compatibility, diskarbitrationd runs the repair command from the plist # hfsck -y
+ *      https://opensource.apple.com/source/DiskArbitration/DiskArbitration-342.80.2/diskarbitrationd/DAFileSystem.c.auto.html
+ *      __DAFileSystemProbeCallback(), __DAFileSystemProbeCallbackStage1(), __DAFileSystemProbeCallbackStage2()
+ * . diskarbitrationd calls the mount command: # mount_fusefs_hfs $device $mountpoint
+ *      https://opensource.apple.com/source/DiskArbitration/DiskArbitration-342.80.2/diskarbitrationd/DAMount.c.auto.html
+ *      __DAMountWithArgumentsCallback(), __DAMountWithArgumentsCallbackStage1(), __DAMountWithArgumentsCallbackStage2()
+ *      https://opensource.apple.com/source/DiskArbitration/DiskArbitration-342.80.2/diskarbitrationd/DAFileSystem.c.auto.html
+ *      DAFileSystemMountWithArguments()
+ * . mount_fusefs_hfs calls fusefs_hfs, whose main() is in this file
+ * . main() uses hfs_mount() to check whether to mount readonly
+ * . main() calls fuse_main(), which handles the rest of mounting and does not return until unmount
+ * . macFUSE calls in to the struct fuse_operations FuseHFS_operations we gave it to handle all the actual HFS operations with the functions in fusefs_hfs.c
+ *
+ * For info on how to see what diskarbitrationd is doing to learn all this ^ see how_to_debug_diskarbitrationd.md
+ *
  * Created by Zydeco on 27/2/2010.
  * Copyright 2010 namedfork.net. All rights reserved.
  *
  * Edited by Joel Cretan 7/19/2014
+ * Edited by Joel Cretan 8/24/2022
+ *
  * Still licensed under GPLv2: https://www.gnu.org/licenses/gpl-2.0.html
  */
 #include "common.h"
@@ -128,9 +165,11 @@ int main(int argc, char* argv[], char* envp[], char** exec_path) {
     struct fuse_args args = FUSE_ARGS_INIT(argc, argv);
 	
 	bzero(&options, sizeof options);
-	if (fuse_opt_parse(&args, NULL, FuseHFS_opts, FuseHFS_opt_proc)) return 1;
+	if (fuse_opt_parse(&args, NULL, FuseHFS_opts, FuseHFS_opt_proc))
+        return 1;
 	options.mountpoint = strdup(argv[1]);
-	if (options.encoding == NULL) options.encoding = strdup("Macintosh");
+	if (options.encoding == NULL)
+        options.encoding = strdup("Macintosh");
 	
 	// mount volume
 	hfsvolent vstat;
@@ -159,7 +198,7 @@ int main(int argc, char* argv[], char* envp[], char** exec_path) {
 		perror("iconv");
 		return 1;
 	}
-    strcpy(volnameOption+10, volname);
+    strncpy(volnameOption+10, volname, sizeof(volnameOption) - 10);
 	free(volname);
     fuse_opt_add_arg(&args, volnameOption);
     fuse_opt_add_arg(&args, "-s");
@@ -167,8 +206,8 @@ int main(int argc, char* argv[], char* envp[], char** exec_path) {
     if (is_root()) fuse_opt_add_arg(&args, "-oallow_other"); // this option requires privileges
     fuse_opt_add_arg(&args, "-odefer_permissions");
     char *fsnameOption = malloc(strlen(options.path)+10);
-    strcpy(fsnameOption, "-ofsname=");
-    strcat(fsnameOption, options.path);
+    strncpy(fsnameOption, "-ofsname=", strlen(options.path)+10);
+    strncat(fsnameOption, options.path, strlen(options.path)+10);
     fuse_opt_add_arg(&args, fsnameOption);
     free(fsnameOption);
     //fuse_opt_add_arg(&args, "-debug");

@@ -2,9 +2,14 @@
  *  util.c
  *  FuseHFS
  *
- *  Created by Zydeco on 11/3/2010.
- *  Copyright 2010 namedfork.net. All rights reserved.
+ *  This is fusefs_hfs.util, which is called during the probing/mount process.
+ *  See full description in main.c
  *
+ *  Created by Zydeco on 2010-03-11.
+ *  Copyright 2010 namedfork.net. All rights reserved.
+ *  Edited by Joel Cretan 2022-08-24
+ *
+ *  Licensed under GPLv2: https://www.gnu.org/licenses/gpl-2.0.html
  */
 
 #include <stdio.h>
