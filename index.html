@@ -39,14 +39,14 @@
         <article class="markdown-body">
           <p>An update to <a href="http://namedfork.net/fusehfs">FuseHFS</a> to work with <a href="https://osxfuse.github.io/">macFUSE</a></p>
 
-<p>Apple is nothing if not willing to drop support for outdated technologies, so Macs running OS X 10.6 onward can't write to HFS standard volumes. Reading should still work as of 10.9, but it was removed in 12 (Monterey). Thus the need for fuseHFS.</p>
-<p>The original release of this FUSE module was designed for the original MacFUSE, which is no longer maintained and doesn't work on newer versions of macOS. The <a href="https://osxfuse.github.io">macFUSE</a> project picked up the FUSE-on-Mac baton, so that's the way to go from now on. The original FuseHFS code was published under GPL v2, which is maintained for this version.</p>
+<p>Apple is nothing if not willing to drop support for outdated technologies, so Macs running OS X 10.6 onward can't write to HFS standard volumes. Reading should still work as of 10.9, but it was removed in 12 (Monterey). Thus the need for fuseHFS if you want to read or write standard HFS volumes.</p>
+<p>Before installing fuseHFS, you must install <a href="https://osxfuse.github.io">macFUSE</a>! The original FuseHFS code was published under GPL v2, which is maintained for this version.</p>
 
 <hr><h4>
 <a name="release-of-0.1.5" class="anchor" href="#release-of-0.1.5"><span class="octicon octicon-link"></span></a>2022-08-24: Release of 0.1.5</h4>
 
 <p><a href="Releases/fusehfs-macos-installer-x64-0.1.5.pkg">Download fuseHFS 0.1.5</a></p>
-<p>At long last, fuseHFS can work again on the current macOS version, Monterey. Apple's built-in read-only support for HFS prevent us from using fuseHFS from 10.10 through 11, but we now have a working version again. This version should work with macFUSE 4.4.0 or later, on macOS 12 or later on x86-64 (ARM via Rosetta has been reported to work but is not officially supported yet).</p>
+<p>At long last, fuseHFS can work again on the current macOS version, Monterey. Apple's built-in read-only support for HFS prevent us from using fuseHFS from 10.10 through 11, but we now have a working version again. This version should work with macFUSE 4.4.0 or later, on macOS 12 or later on x86-64 (ARM via Rosetta has been reported to work but is not officially supported yet). Be sure to install <a href="https://osxfuse.github.io">macFUSE</a> first.</p>
 <p>However, only a few configurations have been tested. As such, please note this <span style="color:red"><em>WARNING! This is hobbyist software.</em></span> It has been tested on several configurations, but your system may be different, and there may be special uses that have not been tested. It never hurts to back up any important data before using new software (just copy your disk image!). Please file bug reports as GitHub issues.</p> 
 <p>And again, thanks to the original author <a href="http://namedfork.net">Jesús Álvarez (zydeco)</a>; the most crucial parts of the code are largely unchanged since his version, so we are still indebted to him.</p>
 
