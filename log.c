@@ -6,59 +6,62 @@
 //
 //  Licensed under GPLv2: https://www.gnu.org/licenses/gpl-2.0.html
 //
+#include "common.h"
 
 #include <stdio.h>
 #include <fcntl.h>
 #include <string.h>
 #include <unistd.h>
 #include <sys/errno.h>
+#include <sys/stat.h>
 #include <time.h>
 #include <pwd.h>
 #include <limits.h>
-#include <osxfuse/fuse.h>
 
-#define LOGPATH "/Library/Logs/fusehfs.log"
+#include "log.h"
+
+#define MAC_FIRST_USER 501
+#define MEGABYTE 1 << 20
 
 int log_to_file() {
     char logpath[PATH_MAX];
-    char *home = getpwuid(getuid())->pw_dir;
+    
+    // you can't write to /Library any more, so use ~/Library instead
+    char *home = getpwuid(MAC_FIRST_USER)->pw_dir;
     if (strlen(home) + strlen(LOGPATH) >= PATH_MAX)
         return -1;
-    strcpy(logpath, home);
+    strncpy(logpath, home, sizeof(logpath));
     strcat(logpath, LOGPATH);
+    
+    // delete old log if larger than 1MB so it doesn't get out of control
+    // if we can't...that's probably fine.
+    struct stat st;
+    int rc = stat(logpath, &st);
+    if (rc == 0) {
+        if (st.st_size > MEGABYTE) {
+            unlink(logpath);
+        }
+    }
+    
     int log = open(logpath, O_CREAT | O_WRONLY | O_APPEND, S_IRUSR | S_IWUSR);
+    chown(logpath, MAC_FIRST_USER, -1); // it's inconvenient for root, the owner of this process, to own the log
     if (log < 0) {
         fprintf(stderr, "open errno: %d\n", errno);
         return log;
     }
-    if (dup2(log, STDOUT_FILENO) < 0)
-        fprintf(stderr, "stdout dup2 errno: %d\n", errno);
     if (dup2(log, STDERR_FILENO) < 0)
         fprintf(stderr, "stderr dup2 errno: %d\n", errno);
     fflush(stderr);
     return log;
 }
 
-void log_invoking_command(int argc, char *argv[]) {
+void log_invoking_command(char *filename, int argc, char *argv[]) {
     time_t curr_time = time(NULL);
     char *current_time = ctime(&curr_time);
     current_time[strlen(current_time) - 1] = 0; // remove the \n at the end of the string
-    printf("\n%s -- invoked with argv: ", current_time);
+    fprintf(stderr, "\n%s %s -- invoked with argv: ", filename, current_time);
     for (int i = 0; i < argc; i++)
-        printf("%s ", argv[i]);
-    printf("\n");
-    fflush(stdout);
-}
-
-void log_fuse_call(struct fuse_args *args) {
-    char buf[1024];
-    for (int i = 0; i < args->argc; i++) {
-        if (strlen(buf) + strlen(args->argv[i]) + 1 <= 1024) {
-            strcat(buf, args->argv[i]);
-            buf[strlen(buf) + 1] = 0;
-            buf[strlen(buf)] = ' ';
-        }
-    }
-    printf("Running fuse_main: fuse_main(%d, %s)\n", args->argc, buf);
-    fflush(stdout);
+        fprintf(stderr, "%s ", argv[i]);
+    fprintf(stderr, "\n");
+    fflush(stderr);
 }

@@ -26,9 +26,14 @@
 # include "ck_mdb.h"
 # include "ck_volume.h"
 # include "ck_btree.h"
+#include <fcntl.h>
+#include <unistd.h>
 
 int hfsck(hfsvol *vol)
 {
+    int log = open("/tmp/hfsck.log", O_WRONLY | O_APPEND | O_CREAT);
+    dprintf(log, "func hfsck invoked\n");
+    close(log);
   return ck_mdb(vol) || ck_volume(vol) ||
     ck_btree(&vol->ext) || ck_btree(&vol->cat);
 }

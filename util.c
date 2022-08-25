@@ -2,9 +2,14 @@
  *  util.c
  *  FuseHFS
  *
- *  Created by Zydeco on 11/3/2010.
- *  Copyright 2010 namedfork.net. All rights reserved.
+ *  This is fusefs_hfs.util, which is called during the probing/mount process.
+ *  See full description in main.c
  *
+ *  Created by Zydeco on 2010-03-11.
+ *  Copyright 2010 namedfork.net. All rights reserved.
+ *  Edited by Joel Cretan 2022-08-24
+ *
+ *  Licensed under GPLv2: https://www.gnu.org/licenses/gpl-2.0.html
  */
 
 #include <stdio.h>
@@ -17,14 +22,23 @@
 #include <iconv.h>
 #include <sys/errno.h>
 
+#include "common.h"
+#include "log.h"
+
+#define FILENAME "[util.c]\t"
+
+/* no longer supported in xnu 3247 / osx 10.11  */
+/* from xnu/bsd/sys/loadable_fs.h.auto.html     */
+#define    FSUC_INITIALIZE        'i'    /* initialize FS */
+
 int usage() {
-	fprintf(stderr, "usage: fusefs_hfs.util [-p|-m|-i] <options>\n");
+	fprintf(stderr, FILENAME "usage: fusefs_hfs.util [-p|-m|-i] <options>\n");
 	return EXIT_FAILURE;
 }
 
 int have_macfuse() {
 	struct stat us;
-	return (stat("/usr/local/lib/libfuse_ino64.dylib", &us) == 0);
+	return (stat("/usr/local/lib/libfuse.dylib", &us) == 0);
 }
 
 #define HFSPLUS_SIGWORD	0x482b /* 'H+' */
@@ -45,6 +59,7 @@ int probe (const char *device, int removable, int readonly) {
 	} else {
 		hfsvolent ent;
 		if (hfs_vstat(vol, &ent) == 0)
+            // WARNING!! apparently stdout is a pipe!!!
 			printf("%s\n", ent.name); // TODO: convert to UTF8
 	}
 	hfs_umount(vol);
@@ -70,23 +85,33 @@ int initialize (const char *device, const char *label) {
 	return EXIT_SUCCESS;
 }
 
-int mount (const char *device, const char *mountpoint) {
+/*int mount (const char *device, const char *mountpoint) {
 	char *cmd;
-	asprintf(&cmd, "/System/Library/Filesystems/fusefs_hfs.fs/Contents/Resources/fuse_wait \"%s\" %d /System/Library/Filesystems/fusefs_hfs.fs/Contents/Resources/fusefs_hfs \"%s\" \"%s\"", mountpoint, 5, device, mountpoint);
-	int ret = system(cmd);
+	asprintf(&cmd, "/Library/Filesystems/fusefs_hfs.fs/Contents/Resources/fuse_wait \"%s\" %d /Library/Filesystems/fusefs_hfs.fs/Contents/Resources/fusefs_hfs \"%s\" \"%s\"", mountpoint, 5, device, mountpoint);
+    fprintf(stderr, FILENAME "mount cmd: %s", cmd);
+    fflush(stderr);
+    int ret = system(cmd); // TODO: escape input to avoid command injection
 	free(cmd);
 	return ret?FSUR_IO_FAIL:FSUR_IO_SUCCESS;
-}
+}*/
 
-int main (int argc, char * argv[], char * envp[], char * apple[]) {	
+int main (int argc, char * argv[], char * envp[], char * apple[]) {
+    log_to_file();
+    log_invoking_command(FILENAME, argc, argv);
+
+    
 	// check arguments
 	if (argc < 3) return usage();
 	int ret = 0;
 	switch (argv[1][1]) {
 		case FSUC_PROBE:
+            fprintf(stderr, FILENAME "probing\n");
+            fflush(stderr);
 			ret = probe(argv[2], !strcmp(argv[3],DEVICE_REMOVABLE), !strcmp(argv[4],DEVICE_READONLY));
 			break;
 		case FSUC_INITIALIZE: {
+            fprintf(stderr, FILENAME "initializing\n");
+            fflush(stderr);
 			int larg = 2;
 			const char *label, *device;
 			if (strcmp(argv[2], "-v") == 0) larg = 3;
@@ -94,9 +119,11 @@ int main (int argc, char * argv[], char * envp[], char * apple[]) {
 			device = argv[larg+1];
 			ret = initialize(device, label);
 			break; }
-		case FSUC_MOUNT:
+		/*case FSUC_MOUNT:
+            fprintf(stderr, FILENAME "mounting\n");
+            fflush(stderr);
 			ret = mount(argv[argc-2], argv[argc-1]);
-			break;
+			break;*/
 		case 'k': // get UUID
 		case 's': // set UUID
 			ret = FSUR_INVAL;
@@ -105,5 +132,6 @@ int main (int argc, char * argv[], char * envp[], char * apple[]) {
 			ret = FSUR_INVAL;
 			break;
 	}
+    fprintf(stderr, FILENAME "returning %d\n", ret);
 	return ret;
 }

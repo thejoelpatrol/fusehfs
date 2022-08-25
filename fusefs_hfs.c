@@ -2,13 +2,25 @@
  * fusefs_hfs.c
  * FuseHFS
  *
- * Created by Zydeco on 27/2/2010.
+ * This file contains the meat of the macFUSE implementation, all
+ * the functions that implement the FUSE API. It is largely unchanged
+ * from zydeco's original v0.1.3
+ *
+ * &FuseHFS_operations is passed to fuse_main() and the callbacks are invoked
+ * when doing operations like reading a directory, opening/writing files, etc.
+ * Actually handling the HFS file system is mostly deferred to hfsutils, included
+ * as a source library.
+ * e.g. FuseHFS_open() calls hfs_open(), FuseHFS_unlink() calls hfs_delete(), etc
+ *
+ * Created by Zydeco on 2010-02-27.
  * Copyright 2010 namedfork.net. All rights reserved.
+ * Edited by Joel Cretan 2022-08-24
  *
  * Licensed under GPLv2: https://www.gnu.org/licenses/gpl-2.0.html
  */
+#include "common.h"
 
-#include <osxfuse/fuse.h>
+#include <fuse/fuse.h>
 #include <string.h>
 #include <errno.h>
 #include <stdio.h>
@@ -22,10 +34,11 @@
 #include <assert.h>
 #include <libkern/OSByteOrder.h>
 #include <sys/xattr.h>
+
 #include "fusefs_hfs.h"
 #include "log.h"
 
-//#define DEBUG
+#define FILENAME "[fusefs_hfs.c]\t"
 
 #ifdef DEBUG
 #define dprintf(args...) printf(args)
@@ -464,7 +477,6 @@ void * FuseHFS_init(struct fuse_conn_info *conn) {
 	//char logfn[128];
 	//sprintf(logfn, "/fusefs_hfs/FuseHFS.%d.log", getpid());
 	//stderr = freopen(logfn, "a", stderr);
-    log_to_file();
 	fprintf(stderr, "FuseHFS_init\n");
 	fflush(stderr);
 #endif
