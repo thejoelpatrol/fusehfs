@@ -1,18 +1,22 @@
 fusehfs
 =======
 
-Goal: update [FuseHFS](http://namedfork.net/fusehfs) to provide R/W HFS support with [macFUSE](https://osxfuse.github.io/) on macOS 12
+R/W HFS support with [macFUSE](https://osxfuse.github.io/) on macOS 12
 
 The original fusehfs code was published under GPL v2, so this version's code is too.
 
 --------------------------------
-#### Release 0.1.4b
+#### Release 0.1.5
 See the [project page](https://thejoelpatrol.github.io/fusehfs/)
 
 --------------------------------
 #### Status 1/3/2022
 
 We're discussing in the Issue #2 whether we can make fusehfs work again on macOS 12 Monterey now that HFS support is removed entirely by Apple, and whether long-term functionality will require using the [File Provider API](https://developer.apple.com/documentation/fileprovider) now that kexts are deprecated.
+
+--------------------------------
+#### Release 0.1.4b
+See the [project page](https://thejoelpatrol.github.io/fusehfs/)
 
 --------------------------------
 #### Status 7/19/2014
