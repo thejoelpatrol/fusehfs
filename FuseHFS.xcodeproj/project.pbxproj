@@ -120,12 +120,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		283BD8A6114997EB003F9F55 /* mount_fusefs_hfs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = mount_fusefs_hfs; sourceTree = "<group>"; };
 		2842B7D611AFC0100031D3AE /* libfuse_ino64.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libfuse_ino64.dylib; path = /usr/local/lib/libfuse_ino64.dylib; sourceTree = "<absolute>"; };
 		2861C556113A706600D0447F /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
 		286A118111AF26C6001EEF69 /* bootblocks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bootblocks.h; sourceTree = "<group>"; };
 		286A11A811AF2A91001EEF69 /* bootblocks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bootblocks.h; sourceTree = "<group>"; };
-		286A11C611AF2F21001EEF69 /* postinstall.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = postinstall.sh; sourceTree = "<group>"; };
 		289FB8D9113BE43300409A62 /* libhfs.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libhfs.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		289FB906113BE52700409A62 /* os.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = os.c; sourceTree = "<group>"; };
 		28A3D9C8122C577900A7869C /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
@@ -399,7 +397,6 @@
 				08FB7795FE84155DC02AAC07 /* Source */,
 				28F0DE211139382300C3718A /* hfsutils-3.2.6 */,
 				1AB674ADFE9D54B511CA2CBB /* Products */,
-				286A11C611AF2F21001EEF69 /* postinstall.sh */,
 				2861C556113A706600D0447F /* libiconv.dylib */,
 				2842B7D611AFC0100031D3AE /* libfuse_ino64.dylib */,
 				28A3D9C8122C577900A7869C /* CoreFoundation.framework */,
@@ -438,7 +435,6 @@
 			children = (
 				28E72DAA1149551100084372 /* fusefs_hfs-Info.plist */,
 				28E72DB6114956C700084372 /* util.c */,
-				283BD8A6114997EB003F9F55 /* mount_fusefs_hfs */,
 				FFD708750EE66DA70026C014 /* main.c */,
 			);
 			name = "FS Bundle";
