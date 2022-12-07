@@ -13,4 +13,5 @@ struct fusehfs_options {
     char	*encoding;
 	char	*mountpoint;
 	int		readonly;
+  int partition;
 };

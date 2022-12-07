@@ -495,7 +495,7 @@ void * FuseHFS_init(struct fuse_conn_info *conn) {
 	
 	// mount volume
 	int mode = options->readonly?HFS_MODE_RDONLY:HFS_MODE_ANY;
-	if (NULL == hfs_mount(options->path, 0, mode)) {
+	if (NULL == hfs_mount(options->path, options->partition, mode)) {
 		perror("hfs_mount");
 		exit(1);
 	}
