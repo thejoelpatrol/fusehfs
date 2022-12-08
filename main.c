@@ -191,6 +191,7 @@ int main(int argc, char* argv[], char* envp[], char** exec_path) {
 	hfs_umount(NULL);
 
 	// MacFUSE options
+#ifdef __APPLE__
     char volnameOption[128] = "-ovolname=";
 	char *volname = iconv_convert(vstat.name, options.encoding, "UTF-8");
 	if (volname == NULL) {
@@ -200,19 +201,26 @@ int main(int argc, char* argv[], char* envp[], char** exec_path) {
     strncpy(volnameOption+10, volname, sizeof(volnameOption) - 10);
 	free(volname);
     fuse_opt_add_arg(&args, volnameOption);
+#endif
     fuse_opt_add_arg(&args, "-s");
+#ifdef __APPLE__
     fuse_opt_add_arg(&args, "-ofstypename=hfs");
+#endif
     if (is_root()) fuse_opt_add_arg(&args, "-oallow_other"); // this option requires privileges
+#ifdef __APPLE__
     fuse_opt_add_arg(&args, "-odefer_permissions");
+#endif
     char *fsnameOption = malloc(strlen(options.path)+10);
     strncpy(fsnameOption, "-ofsname=", strlen(options.path)+10);
     strncat(fsnameOption, options.path, strlen(options.path)+10);
     fuse_opt_add_arg(&args, fsnameOption);
     free(fsnameOption);
     //fuse_opt_add_arg(&args, "-debug");
+#ifdef __APPLE__
     fuse_opt_add_arg(&args, "-olocal"); // full effect uncertain, but necessary to display it at as a local drive
                                         // rather than a server, which assures better unmounting (fully ejecting disk image)
                                         // https://github.com/osxfuse/osxfuse/wiki/Mount-options
+#endif
      
 	// run fuse
     log_fuse_call(&args);

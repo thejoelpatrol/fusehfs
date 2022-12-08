@@ -32,7 +32,9 @@
 #include <iconv.h>
 #include <unistd.h>
 #include <assert.h>
+#ifdef __APPLE__
 #include <libkern/OSByteOrder.h>
+#endif
 #include <sys/xattr.h>
 
 #include "fusefs_hfs.h"
@@ -44,6 +46,41 @@
 #define dprintf(args...) printf(args)
 #else
 #define dprintf(fmt, args...)
+#endif
+
+#ifndef __APPLE__
+#include <endian.h>
+struct unaligned_uint32 {
+	uint32_t val;
+} __attribute__((__packed__));
+
+static inline void
+OSWriteBigInt32(void* base, uint offset, uint32_t data)
+{
+	((struct unaligned_uint32 *)((uint8_t *)base + offset))->val = htobe32(data);
+}
+
+static inline uint32_t
+OSReadBigInt32(const void* base, uint offset)
+{
+	return be32toh(((struct unaligned_uint32 *)((const uint8_t *)base + offset))->val);
+}
+
+struct unaligned_uint16 {
+	uint16_t val;
+} __attribute__((__packed__));
+
+static inline void
+OSWriteBigInt16(void* base, uint offset, uint16_t data)
+{
+	((struct unaligned_uint16 *)((uint8_t *)base + offset))->val = htobe16(data);
+}
+
+static inline uint16_t
+OSReadBigInt16(const void* base, uint offset)
+{
+	return be16toh(((struct unaligned_uint16 *)((const uint8_t *)base + offset))->val);
+}
 #endif
 
 // globals
@@ -516,6 +553,7 @@ void FuseHFS_destroy(void *userdata) {
 	hfs_umountall();
 }
 
+#ifdef __APPLE__
 static int FuseHFS_listxattr(const char *path, char *list, size_t size) {
 	dprintf("listxattr %s %p %lu\n", path, list, size);
 	
@@ -548,7 +586,7 @@ static int FuseHFS_listxattr(const char *path, char *list, size_t size) {
 }
 
 static int FuseHFS_getxattr(const char *path, const char *name, char *value, size_t size,
-				uint32_t position) {
+                               uint32_t position) {
 	//dprintf("getxattr %s %s %p %lu %u\n", path, name, value, size, position);
 	
 	// convert to hfs path
@@ -758,6 +796,7 @@ static int FuseHFS_removexattr(const char *path, const char *name) {
 	free(hfspath);
 	return -ENOATTR;	
 }
+#endif
 
 static int FuseHFS_chmod (const char *path, mode_t newmod) {
 	dprintf("chmod %s %o\n", path, newmod);
@@ -979,10 +1018,12 @@ struct fuse_operations FuseHFS_operations = {
 	//.flush       = FuseHFS_flush,
 	.release     = FuseHFS_release,
 	//.fsync       = FuseHFS_fsync,
+#ifdef __APPLE__
 	.listxattr   = FuseHFS_listxattr,
 	.getxattr    = FuseHFS_getxattr,
 	.setxattr    = FuseHFS_setxattr,
 	.removexattr = FuseHFS_removexattr,
+#endif
 	.truncate    = FuseHFS_truncate,
 	.ftruncate   = FuseHFS_ftruncate,
 	.chmod		 = FuseHFS_chmod,

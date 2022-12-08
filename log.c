@@ -17,6 +17,7 @@
 #include <time.h>
 #include <pwd.h>
 #include <limits.h>
+#include <stdlib.h>
 
 #include "log.h"
 
@@ -27,10 +28,14 @@ int log_to_file() {
     char logpath[PATH_MAX];
     
     // you can't write to /Library any more, so use ~/Library instead
+#ifdef __APPLE__
     char *home = getpwuid(MAC_FIRST_USER)->pw_dir;
+#else
+    char *home = getenv("HOME");
+#endif
     if (strlen(home) + strlen(LOGPATH) >= PATH_MAX)
         return -1;
-    strncpy(logpath, home, sizeof(logpath));
+    strncpy(logpath, home, sizeof(logpath) - sizeof(LOGPATH));
     strcat(logpath, LOGPATH);
     
     // delete old log if larger than 1MB so it doesn't get out of control
@@ -44,7 +49,9 @@ int log_to_file() {
     }
     
     int log = open(logpath, O_CREAT | O_WRONLY | O_APPEND, S_IRUSR | S_IWUSR);
+#ifdef __APPLE__
     chown(logpath, MAC_FIRST_USER, -1); // it's inconvenient for root, the owner of this process, to own the log
+#endif
     if (log < 0) {
         fprintf(stderr, "open errno: %d\n", errno);
         return log;
