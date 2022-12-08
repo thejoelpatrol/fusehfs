@@ -471,7 +471,8 @@ void * FuseHFS_init(struct fuse_conn_info *conn) {
 	FUSE_ENABLE_SETVOLNAME(conn); // this actually doesn't do anything
 	FUSE_ENABLE_XTIMES(conn); // and apparently this doesn't either
 #endif
-	
+
+	log_to_file();
 	
 #ifdef DEBUG
 	//char logfn[128];
