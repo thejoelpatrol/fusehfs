@@ -67,7 +67,8 @@ extern struct fuse_operations FuseHFS_operations;
 struct fusehfs_options options = {
     .path =         NULL,
     .encoding =		NULL,
-	.readonly =		0
+    .readonly =		0
+    .appledouble = 0,
 };
 
 enum {
@@ -75,6 +76,7 @@ enum {
 	KEY_HELP,
 	KEY_ENCODING,
 	KEY_READONLY,
+	KEY_APPLEDOUBLE,
 };
 
 static struct fuse_opt FuseHFS_opts[] = {
@@ -84,6 +86,7 @@ static struct fuse_opt FuseHFS_opts[] = {
 	FUSE_OPT_KEY("--help",		KEY_HELP),
 	FUSE_OPT_KEY("--encoding=",	KEY_ENCODING),
 	FUSE_OPT_KEY("--readonly",	KEY_READONLY),
+	FUSE_OPT_KEY("--appledouble",	KEY_APPLEDOUBLE),
 	FUSE_OPT_END
 };
 
@@ -122,6 +125,9 @@ static int FuseHFS_opt_proc(void *data, const char *arg, int key, struct fuse_ar
 			exit(0);
 		case KEY_READONLY:
 			options.readonly = 1;
+			return 0;
+	        case KEY_APPLEDOUBLE:
+			options.appledouble = 1;
 			return 0;
 	}
 	return 0;
