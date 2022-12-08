@@ -50,6 +50,7 @@
 iconv_t iconv_to_utf8, iconv_to_mac;
 char _volname[HFS_MAX_VLEN+1];
 int _readonly;
+int _appledouble;
 
 #pragma mark Character set conversion
 char * hfs_to_utf8 (const char * in, char * out, size_t outlen) {
@@ -141,16 +142,364 @@ static int dirent_to_stbuf(const hfsdirent *ent, struct stat *stbuf) {
 	return 0;
 }
 
+static void make_finderinfo(void *buf, const hfsdirent *ent) {
+	// return finder info
+	if (ent->flags & HFS_ISDIR) {
+		// directory info
+		OSWriteBigInt16(buf, 0, ent->u.dir.rect.top);
+		OSWriteBigInt16(buf, 2, ent->u.dir.rect.left);
+		OSWriteBigInt16(buf, 4, ent->u.dir.rect.bottom);
+		OSWriteBigInt16(buf, 6, ent->u.dir.rect.right);
+		OSWriteBigInt16(buf, 8, ent->fdflags);
+		OSWriteBigInt16(buf, 10, ent->fdlocation.v);
+		OSWriteBigInt16(buf, 12, ent->fdlocation.h);
+		OSWriteBigInt16(buf, 14, ent->u.dir.view);
+		// DXInfo
+		OSWriteBigInt16(buf, 16, ((DXInfo*)(ent->u.dir.xinfo))->frScroll.v);
+		OSWriteBigInt16(buf, 18, ((DXInfo*)(ent->u.dir.xinfo))->frScroll.h);
+		OSWriteBigInt32(buf, 20, ((DXInfo*)(ent->u.dir.xinfo))->frOpenChain);
+		OSWriteBigInt16(buf, 24, ((DXInfo*)(ent->u.dir.xinfo))->frUnused);
+		OSWriteBigInt16(buf, 26, ((DXInfo*)(ent->u.dir.xinfo))->frComment);
+		OSWriteBigInt32(buf, 28, ((DXInfo*)(ent->u.dir.xinfo))->frPutAway);		
+	} else {
+		// file info
+		memcpy(buf, ent->u.file.type, 4);
+		memcpy((uint8_t *)buf+4, ent->u.file.creator, 4);
+		OSWriteBigInt16(buf, 8, ent->fdflags);
+		OSWriteBigInt16(buf, 10, ent->fdlocation.v);
+		OSWriteBigInt16(buf, 12, ent->fdlocation.h);
+		OSWriteBigInt16(buf, 14, ent->u.file.window);
+		// FXInfo
+		OSWriteBigInt16(buf, 16, ((FXInfo*)(ent->u.file.xinfo))->fdIconID);
+		OSWriteBigInt16(buf, 18, ((FXInfo*)(ent->u.file.xinfo))->fdUnused[0]);
+		OSWriteBigInt16(buf, 20, ((FXInfo*)(ent->u.file.xinfo))->fdUnused[1]);
+		OSWriteBigInt16(buf, 22, ((FXInfo*)(ent->u.file.xinfo))->fdUnused[2]);
+		OSWriteBigInt16(buf, 24, ((FXInfo*)(ent->u.file.xinfo))->fdUnused[3]);
+		OSWriteBigInt16(buf, 26, ((FXInfo*)(ent->u.file.xinfo))->fdComment);
+		OSWriteBigInt32(buf, 28, ((FXInfo*)(ent->u.file.xinfo))->fdPutAway);
+	}
+
+}
+
+static void update_finderinfo(hfsdirent *ent, const void *buf) {
+	if (ent->flags & HFS_ISDIR) {
+		// directory
+		ent->u.dir.rect.top =		OSReadBigInt16(buf, 0);
+		ent->u.dir.rect.left =		OSReadBigInt16(buf, 2);
+		ent->u.dir.rect.bottom =		OSReadBigInt16(buf, 4);
+		ent->u.dir.rect.right =		OSReadBigInt16(buf, 6);
+		ent->fdflags =				OSReadBigInt16(buf, 8);
+		ent->fdlocation.v =			OSReadBigInt16(buf, 10);
+		ent->fdlocation.h =			OSReadBigInt16(buf, 12);
+		ent->u.dir.view =			OSReadBigInt16(buf, 14);
+		// DXInfo
+		((DXInfo*)(ent->u.dir.xinfo))->frScroll.v   = OSReadBigInt16(buf, 16);
+		((DXInfo*)(ent->u.dir.xinfo))->frScroll.h   = OSReadBigInt16(buf, 18);
+		((DXInfo*)(ent->u.dir.xinfo))->frOpenChain  = OSReadBigInt32(buf, 20);
+		((DXInfo*)(ent->u.dir.xinfo))->frUnused     = OSReadBigInt16(buf, 24);
+		((DXInfo*)(ent->u.dir.xinfo))->frComment    = OSReadBigInt16(buf, 26);
+		((DXInfo*)(ent->u.dir.xinfo))->frPutAway    = OSReadBigInt32(buf, 28);
+	} else {
+		// regular file
+		memcpy(ent->u.file.type, buf, 4);
+		memcpy(ent->u.file.creator, buf+4, 4);
+		ent->u.file.type[4] = ent->u.file.creator[4] = '\0';
+		ent->fdflags       = OSReadBigInt16(buf, 8);
+		ent->fdlocation.v  = OSReadBigInt16(buf, 10);
+		ent->fdlocation.h  = OSReadBigInt16(buf, 12);
+		ent->u.file.window = OSReadBigInt16(buf, 14);
+		// FXInfo
+		((FXInfo*)(ent->u.file.xinfo))->fdIconID    = OSReadBigInt16(buf, 16);
+		((FXInfo*)(ent->u.file.xinfo))->fdUnused[0] = OSReadBigInt16(buf, 18);
+		((FXInfo*)(ent->u.file.xinfo))->fdUnused[1] = OSReadBigInt16(buf, 20);
+		((FXInfo*)(ent->u.file.xinfo))->fdUnused[2] = OSReadBigInt16(buf, 22);
+		((FXInfo*)(ent->u.file.xinfo))->fdUnused[3] = OSReadBigInt16(buf, 24);
+		((FXInfo*)(ent->u.file.xinfo))->fdComment   = OSReadBigInt16(buf, 26);
+		((FXInfo*)(ent->u.file.xinfo))->fdPutAway   = OSReadBigInt32(buf, 28);
+		// bless parent folder if it's a system file
+		if ((strcmp(ent->u.file.type, "zsys") == 0) && (strcmp(ent->u.file.creator, "MACS") == 0) && (strcmp(ent->name, "System") == 0)) {
+			// bless
+			dprintf("setxattr: blessing folder %lu\n", ent->parid);
+			hfsvolent volent;
+			hfs_vstat(NULL, &volent);
+			volent.blessed = ent->parid;
+			hfs_vsetattr(NULL, &volent);
+		}
+	}
+}
+
+static int get_appledouble_num_entries(const hfsdirent *ent) {
+	int ret = 0;
+	// Resource fork header
+	if (!(ent->flags & HFS_ISDIR) && ent->u.file.rsize)
+		ret++;
+	// Real name entry header
+	// File info entry header
+	// Times entry header
+	ret += 3;
+	return ret;
+}
+
+static int get_appledouble_len_before_resfork(const hfsdirent *ent) {
+	// Header + 12 bytes per entry
+	return 26 + 12 * get_appledouble_num_entries(ent);
+}
+
+static int get_appledouble_len(const hfsdirent *ent) {
+	uint32_t adsize = get_appledouble_len_before_resfork(ent);
+	// Resource fork
+	if (!(ent->flags & HFS_ISDIR) && ent->u.file.rsize)
+		adsize += ent->u.file.rsize;
+	// Real name
+	adsize += strlen(ent->name);
+	// Times
+	adsize += 16;
+	// Finder info
+	adsize += 32;
+
+	return adsize;
+}
+
+#define APPLEDOUBLE_TIME_OFFSET 946684800
+
+uint8_t *create_apple_double(hfsfile *file, size_t *size) {
+	hfsdirent ent;
+	dprintf("create_apple_double\n");
+	if (hfs_fstat(file, &ent) == -1) {
+		dprintf("failed to fstat\n");
+		*size = 0;
+		return NULL;
+	}
+	*size = get_appledouble_len(&ent);
+	uint8_t *res = malloc(*size);
+	if (!res) {
+		*size = 0;
+		return NULL;
+	}
+	// Magic
+	OSWriteBigInt32(res, 0, 0x00051607);
+	// Version
+	OSWriteBigInt32(res, 4, 0x00020000);
+	// Filler
+	memset(res+8, 0, 16);
+	// Number of entries
+	uint16_t num_entries = get_appledouble_num_entries(&ent);
+	OSWriteBigInt16(res, 24, num_entries);
+
+	uint32_t entry_off = 26;
+	uint32_t data_off = 26 + 12 * num_entries;
+	if (!(ent.flags & HFS_ISDIR) && ent.u.file.rsize) {
+		// Resource fork
+		OSWriteBigInt32(res, entry_off, 2); // Type
+		OSWriteBigInt32(res, entry_off + 4, data_off); // Offset
+		OSWriteBigInt32(res, entry_off + 8, ent.u.file.rsize); // Size
+		entry_off += 12;
+
+		hfs_setfork(file, 1);
+		hfs_seek(file, 0, SEEK_SET);
+		hfs_read(file, res + data_off, ent.u.file.rsize);
+
+		data_off += ent.u.file.rsize;
+	}
+
+	// Real name
+	OSWriteBigInt32(res, entry_off, 3); // Type
+	OSWriteBigInt32(res, entry_off + 4, data_off); // Offset
+	OSWriteBigInt32(res, entry_off + 8, strlen(ent.name)); // Size
+	entry_off += 12;
+
+	memcpy(res + data_off, ent.name, strlen(ent.name));
+	data_off += strlen(ent.name);
+
+	// TODO: comment, icon, Macintosh file info
+
+	// File dates info
+	OSWriteBigInt32(res, entry_off, 8); // Type
+	OSWriteBigInt32(res, entry_off + 4, data_off); // Offset
+	OSWriteBigInt32(res, entry_off + 8, 16); // Size
+	entry_off += 12;
+
+	OSWriteBigInt32(res, data_off, ent.crdate - APPLEDOUBLE_TIME_OFFSET);
+	OSWriteBigInt32(res, data_off + 4, ent.mddate - APPLEDOUBLE_TIME_OFFSET);
+	OSWriteBigInt32(res, data_off + 8, ent.bkdate - APPLEDOUBLE_TIME_OFFSET);
+	// Should be access date but we don't have this
+	OSWriteBigInt32(res, data_off + 12, ent.mddate - APPLEDOUBLE_TIME_OFFSET);
+	data_off += 16;
+
+	// Finder info
+	OSWriteBigInt32(res, entry_off, 9); // Type
+	OSWriteBigInt32(res, entry_off + 4, data_off); // Offset
+	OSWriteBigInt32(res, entry_off + 8, 32); // Size
+	entry_off += 12;
+
+	make_finderinfo(res + data_off, &ent);
+	data_off += 32;
+
+	dprintf("AD created: %d == %d\n", *size, data_off);
+
+	return res;
+}
+
+struct hfs_or_appledouble_file {
+	hfsfile *hfs;
+	int is_appledouble;
+	uint8_t *appledouble;
+	size_t appledouble_size;
+};
+
+static void flush_appledouble(struct hfs_or_appledouble_file *ad) {
+	const uint8_t *adbuf = ad->appledouble;
+	uint32_t adsize = ad->appledouble_size;
+	if (adsize < 26)
+		return;
+	// Magic
+	if (OSReadBigInt32(adbuf, 0) != 0x00051607)
+		return;
+	// Version
+	if (OSReadBigInt32(adbuf, 4) != 0x00020000)
+		return;
+	// Number of entries
+	uint16_t num_entries = OSReadBigInt16(adbuf, 24);
+	if (num_entries * 12 + 26 > adsize)
+		return;
+	hfsdirent ent;
+	if (hfs_fstat(ad->hfs, &ent) == -1) {
+		dprintf("fstat failed");
+		return;
+	}
+
+	int ent_updated = 0;
+
+	for (uint i = 0; i < num_entries; i++) {
+		uint32_t entry_off = 26 + i * 12;
+		uint32_t type = OSReadBigInt32(adbuf, entry_off);
+		uint32_t data_off = OSReadBigInt32(adbuf, entry_off + 4);
+		uint32_t data_len = OSReadBigInt32(adbuf, entry_off + 8);
+
+		if (data_off > adsize || data_off + data_len > adsize) {
+			dprintf("Skipping oversized tag: %d, %d, %d", data_off, data_len, adsize);
+			continue;
+		}
+
+		switch(type) {
+		// Resource fork
+		case 2:
+			if (ent.flags & HFS_ISDIR)
+				break;
+			hfs_setfork(ad->hfs, 1);
+			hfs_seek(ad->hfs, 0, SEEK_SET);
+			hfs_write(ad->hfs, adbuf + data_off, data_len);
+			hfs_truncate(ad->hfs, data_len);
+			break;
+		// Real name, anything to do?
+		case 3:
+			break;
+		// TODO: comment, icon, Macintosh file info
+		case 8:
+			if (data_len >= 16) {
+				ent.crdate = OSReadBigInt32(adbuf, data_off) + APPLEDOUBLE_TIME_OFFSET;
+				ent.mddate = OSReadBigInt32(adbuf, data_off + 4) + APPLEDOUBLE_TIME_OFFSET;
+				ent.bkdate = OSReadBigInt32(adbuf, data_off + 8) + APPLEDOUBLE_TIME_OFFSET;
+				// No entry for access date
+				ent_updated = 1;
+			}
+			break;
+		case 9: // Finder info
+			if (data_len >= 32) {
+				update_finderinfo(&ent, adbuf + data_off);
+				ent_updated = 1;
+			}
+			break;
+		}
+	}
+
+	if (ent_updated) {
+		hfs_fsetattr(ad->hfs, &ent);
+	}
+}
+
+static int dirent_to_appledouble_stbuf(const hfsdirent *ent, struct stat *stbuf) {
+	if (ent == NULL || stbuf == NULL) return -1;
+	memset(stbuf, 0, sizeof(struct stat));
+	stbuf->st_ino = ent->cnid | 0x80000000;
+	stbuf->st_mode = 0755;
+	stbuf->st_atime = stbuf->st_mtime = ent->mddate;
+	stbuf->st_ctime = ent->crdate;
+	stbuf->st_uid = getuid();
+	stbuf->st_gid = getgid();
+	// regular file
+	stbuf->st_mode |= S_IFREG;
+	stbuf->st_nlink = 1;
+	stbuf->st_size = get_appledouble_len(ent);
+	return 0;
+}
+
+static int is_appledouble_prefix(const char *hfspath) {
+	if (!_appledouble)
+		return 0;
+	const char *last_colon = strrchr(hfspath, ':');
+	const char *last_part = last_colon ? last_colon + 1 : hfspath;
+	return last_part[0] == '.' && last_part[1] == '_';
+}
+
+static void strip_appledoubleprefix_in_place(char *hfspath) {
+	if (!_appledouble)
+		return;
+	char *last_colon = strrchr(hfspath, ':');
+	char *last_part = last_colon ? last_colon + 1 : hfspath;
+	if (!(last_part[0] == '.' && last_part[1] == '_'))
+		return;
+	memmove(last_part, last_part + 2, strlen(last_part) - 1);
+}
+
+static char *strip_appledoubleprefix_strdup(const char *path) {
+	char *d = strdup(path);
+	if (!d)
+		return NULL;
+	strip_appledoubleprefix_in_place(d);
+	return d;
+}
+	
+static int stat_hfs_or_appledouble(const char *hfspath, hfsdirent *ent, int *is_appledouble) {
+	fprintf(stderr, "Stat %s\n", hfspath);
+
+	if (hfs_stat(NULL, hfspath, ent) == 0) {
+		if (is_appledouble)
+			*is_appledouble = 0;
+		return 0;
+	}
+
+	char *adname = NULL;
+
+	if (is_appledouble_prefix(hfspath) && (adname = strip_appledoubleprefix_strdup(hfspath)) && hfs_stat(NULL, adname, ent) == 0) {
+		if (is_appledouble)
+			*is_appledouble = 1;
+		free(adname);
+		return 0;
+	}
+
+	free(adname);
+	return -1;
+}
+
 #pragma mark FUSE Callbacks
 
 static int FuseHFS_fgetattr(const char *path, struct stat *stbuf,
                   struct fuse_file_info *fi) {
 	hfsdirent ent;
 	
-	if (fi && (hfs_fstat((hfsfile*)fi->fh, &ent) == 0)) {
+	if (fi) {
+		struct hfs_or_appledouble_file *w = (struct hfs_or_appledouble_file *) fi->fh;
 		// open file
-		dirent_to_stbuf(&ent, stbuf);
-		return 0;
+		if (hfs_fstat(w->hfs, &ent) == 0) {
+			if (w->is_appledouble) {
+				dirent_to_appledouble_stbuf(&ent, stbuf);
+				if (w->appledouble)
+					stbuf->st_size = w->appledouble_size;
+			} else
+				dirent_to_stbuf(&ent, stbuf);
+			return 0;
+		}
 	}
 	
 	// convert to hfs path
@@ -158,10 +507,14 @@ static int FuseHFS_fgetattr(const char *path, struct stat *stbuf,
 	if (hfspath == NULL) return -ENOENT;
 	
 	// get file info
+	int is_appledouble;
 	
-	if (hfs_stat(NULL, hfspath, &ent) == 0) {
+	if (stat_hfs_or_appledouble(hfspath, &ent, &is_appledouble) == 0) {
 		// file
-		dirent_to_stbuf(&ent, stbuf);
+		if (is_appledouble)
+			dirent_to_appledouble_stbuf(&ent, stbuf);
+		else
+			dirent_to_stbuf(&ent, stbuf);
 		free(hfspath);
 		return 0;
 	}
@@ -197,12 +550,18 @@ static int FuseHFS_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 	// read contents
 	hfsdirent ent;
 	struct stat stbuf;
-	char dname[4*HFS_MAX_FLEN+3];
+	// Trick: Keep ._ always ready for AppleDouble
+	char adname[4*HFS_MAX_FLEN+5] = "._";
+	char *dname = adname + 2;
 	while (hfs_readdir(dir, &ent) == 0) {
 		// File or directory
 		dirent_to_stbuf(&ent, &stbuf);
 		hfs_to_utf8(ent.name, dname, 4*HFS_MAX_FLEN);
 		filler(buf, dname, &stbuf, 0);
+		if (_appledouble && !(ent.flags & HFS_ISDIR)) {
+			dirent_to_appledouble_stbuf(&ent, &stbuf);
+			filler(buf, adname, &stbuf, 0);
+		}
 	}
 	
 	// close
@@ -262,10 +621,23 @@ static int FuseHFS_unlink(const char *path) {
 	
 	// check that file exists
 	hfsdirent ent;
-	if (hfs_stat(NULL, hfspath, &ent) == -1) {
+	int is_appledouble;
+	if (stat_hfs_or_appledouble(hfspath, &ent, &is_appledouble) == -1) {
 		free(hfspath);
 		dprintf("unlink: ENOENT\n");
 		return -ENOENT;
+	}
+
+	if (is_appledouble) {
+		// Delete resource fork
+		strip_appledoubleprefix_in_place(hfspath);
+		hfsfile *fp = hfs_open(NULL, hfspath);
+		hfs_setfork(fp, 1);
+		hfs_seek(fp, 0, SEEK_SET);
+		hfs_truncate(fp, 0);
+		hfs_close(fp);
+		free(hfspath);
+		return 0;
 	}
 	
 	// check that it's a file
@@ -335,6 +707,12 @@ static int FuseHFS_rename(const char *from, const char *to) {
 	
 	// rename
 	if (hfs_rename(NULL, hfspath1, hfspath2) != 0) {
+		if (is_appledouble_prefix(hfspath1) && hfs_stat(NULL, hfspath1, &ent) == 0) {
+			// Ignore move of AppleDouble files
+			free(hfspath1);
+			free(hfspath2);
+			return 0;
+		}
 		free(hfspath1);
 		free(hfspath2);
 		perror("hfs_rename");
@@ -363,6 +741,34 @@ static int FuseHFS_rename(const char *from, const char *to) {
 	return 0;
 }
 
+static int open_normal(hfsfile *file, struct fuse_file_info *fi) {
+	struct hfs_or_appledouble_file *wrap = malloc(sizeof (struct hfs_or_appledouble_file));
+	if (!wrap) {
+		hfs_close(file);
+		return -ENOMEM;
+	}
+	wrap->is_appledouble = 0;
+	wrap->hfs = file;
+	wrap->appledouble = 0;
+	wrap->appledouble_size = 0;
+	fi->fh = (uint64_t)wrap;
+	return 0;
+}
+
+static int open_appledouble(hfsfile *file, struct fuse_file_info *fi) {
+	struct hfs_or_appledouble_file *wrap = malloc(sizeof (struct hfs_or_appledouble_file));
+	if (!wrap) {
+		hfs_close(file);
+		return -ENOMEM;
+	}
+	wrap->is_appledouble = 1;
+	wrap->hfs = file;
+	wrap->appledouble = NULL;
+	wrap->appledouble_size = 0;
+	fi->fh = (uint64_t)wrap;
+	return 0;
+}
+
 static int FuseHFS_create(const char *path, mode_t mode, struct fuse_file_info *fi) {
 	dprintf("create %s\n", path);
 	if (_readonly) return -EPERM;
@@ -370,19 +776,36 @@ static int FuseHFS_create(const char *path, mode_t mode, struct fuse_file_info *
 	// convert to hfs path
 	char *hfspath = mkhfspath(path);
 	if (hfspath == NULL) return -ENOENT;
-	
+
+	int skip_create = 0;
+	int is_appledouble = is_appledouble_prefix(hfspath);
+	if (is_appledouble) {
+		strip_appledoubleprefix_in_place(hfspath);
+		hfsdirent ent;
+		skip_create = (hfs_stat(NULL, hfspath, &ent) == 0);			
+	}
+
 	// open file
-	hfsfile *file;
-	if ((file = hfs_create(NULL, hfspath, "TEXT", "FUSE"))) {
+	hfsfile *file = 0;
+	if (!skip_create) {
+		file = hfs_create(NULL, hfspath, "TEXT", "FUSE");
 		// close and reopen, because it won't exist until it's closed
-		hfs_close(file);
-		file = hfs_open(NULL, hfspath);
-		fi->fh = (uint64_t)file;
-		free(hfspath);
-		return 0;
+		if (file) hfs_close(file);
+	}
+
+	file = hfs_open(NULL, hfspath);
+	if (file == NULL)
+		return -errno;
+
+	free(hfspath);
+	if (!is_appledouble) {
+		// file
+		return open_normal(file, fi);
+	} else {
+		// appledouble
+		return open_appledouble(file, fi);
 	}
 	
-	free(hfspath);
 	perror("hfs_create");
 	return -errno;
 }
@@ -399,9 +822,15 @@ static int FuseHFS_open(const char *path, struct fuse_file_info *fi) {
 	hfsfile *file = NULL;
 	if ((file = hfs_open(NULL, hfspath))) {
 		// file
-		fi->fh = (uint64_t)file;
 		free(hfspath);
-		return 0;
+		return open_normal(file, fi);
+	}
+
+	if (is_appledouble_prefix(hfspath) && (strip_appledoubleprefix_in_place(hfspath),
+					       file = hfs_open(NULL, hfspath))) {
+		// appledouble
+		free(hfspath);
+		return open_appledouble(file, fi);
 	}
 	
 	free(hfspath);
@@ -412,22 +841,52 @@ static int FuseHFS_open(const char *path, struct fuse_file_info *fi) {
 static int FuseHFS_read(const char *path, char *buf, size_t size, off_t offset,
               struct fuse_file_info *fi) {
 	dprintf("read %s\n", path);
-	
-	hfsfile *file = (hfsfile*)fi->fh;
-	hfs_setfork(file, 0);
-	hfs_seek(file, offset, SEEK_SET);
-	return hfs_read(file, buf, size);
+
+	struct hfs_or_appledouble_file *w = (struct hfs_or_appledouble_file *)fi->fh;
+	hfsfile *file = w->hfs;
+
+	if (!w->is_appledouble) {
+		hfs_setfork(file, 0);
+		hfs_seek(file, offset, SEEK_SET);
+		return hfs_read(file, buf, size);
+	}
+
+	if (!w->appledouble)
+		w->appledouble = create_apple_double(file, &w->appledouble_size);
+	off_t actual_size = size;
+	if (offset >= w->appledouble_size)
+		return 0;
+	if (offset + size >= w->appledouble_size)
+		actual_size = w->appledouble_size - offset;
+	memcpy(buf, w->appledouble + offset, actual_size);
+	return actual_size;
 }
 
 static int FuseHFS_write(const char *path, const char *buf, size_t size,
                off_t offset, struct fuse_file_info *fi) {
 	dprintf("write %s\n", path);
 	if (_readonly) return -EPERM;
-	
-	hfsfile *file = (hfsfile*)fi->fh;
-	hfs_setfork(file, 0);
-	hfs_seek(file, offset, SEEK_SET);
-	return (hfs_write(file, buf, size));
+
+	struct hfs_or_appledouble_file *w = (struct hfs_or_appledouble_file *)fi->fh;
+	hfsfile *file = w->hfs;
+
+	if (!w->is_appledouble) {
+		hfs_setfork(file, 0);
+		hfs_seek(file, offset, SEEK_SET);
+		return (hfs_write(file, buf, size));
+	}
+
+	if (!w->appledouble)
+		w->appledouble = create_apple_double(file, &w->appledouble_size);
+	if (offset + size >= w->appledouble_size) {
+		uint8_t *t = realloc(w->appledouble, 2 * (offset + size));
+		if (!t)
+			return -ENOMEM;
+		w->appledouble = t;
+		w->appledouble_size = offset + size;
+	}
+	memcpy(w->appledouble + offset, buf, size);
+	return size;
 }
 
 static int FuseHFS_statfs(const char *path, struct statvfs *stbuf) {
@@ -445,6 +904,9 @@ static int FuseHFS_statfs(const char *path, struct statvfs *stbuf) {
 }
 
 static int FuseHFS_flush(const char *path, struct fuse_file_info *fi) {
+	struct hfs_or_appledouble_file *w = (struct hfs_or_appledouble_file *)fi->fh;
+	if (w->is_appledouble && w->appledouble)
+		flush_appledouble(w);
 	hfs_flush(NULL);
 	return 0;
 }
@@ -455,9 +917,20 @@ static int FuseHFS_release(const char *path, struct fuse_file_info *fi) {
 	// convert to hfs path
 	char *hfspath = mkhfspath(path);
 	if (hfspath == NULL) return -ENOENT;
-	
-	hfsfile *file = (hfsfile*)fi->fh;
-	hfs_setfork(file, 0);
+
+	struct hfs_or_appledouble_file *w = (struct hfs_or_appledouble_file *)fi->fh;
+	hfsfile *file = w->hfs;
+	if (!w->is_appledouble) {
+		hfs_setfork(file, 0);
+		hfs_close(file);
+		free(hfspath);
+		return 0;
+	}
+
+	if (w->appledouble)
+		flush_appledouble(w);
+
+	hfs_setfork(file, 1);
 	hfs_close(file);
 	free(hfspath);
 	return 0;
@@ -502,6 +975,7 @@ void * FuseHFS_init(struct fuse_conn_info *conn) {
 	
 	// initialize some globals
 	_readonly = options->readonly;
+	_appledouble = options->appledouble;
 	hfsvolent vstat;
 	hfs_vstat(NULL, &vstat);
 	strcpy(_volname, vstat.name);
@@ -525,12 +999,19 @@ static int FuseHFS_listxattr(const char *path, char *list, size_t size) {
 	
 	// find file
 	hfsdirent ent;
-	if (hfs_stat(NULL, hfspath, &ent) == -1) {
+	int is_appledouble;
+	if (stat_hfs_or_appledouble(hfspath, &ent, &is_appledouble) == -1) {
 		free(hfspath);
 		return -ENOENT;
 	}
 	free(hfspath);
-	
+ 
+	if (is_appledouble) {
+		if (list)
+			bzero(list, size);
+		return 0;
+	}
+
 	int needSize = sizeof XATTR_FINDERINFO_NAME;
 	int haveRsrcFork = 0;
 	if ((!(ent.flags & HFS_ISDIR)) && ent.u.file.rsize) {
@@ -557,11 +1038,16 @@ static int FuseHFS_getxattr(const char *path, const char *name, char *value, siz
 	
 	// find file
 	hfsdirent ent;
-	if (hfs_stat(NULL, hfspath, &ent) == -1) {
+	int is_appledouble;
+	if (stat_hfs_or_appledouble(hfspath, &ent, &is_appledouble) == -1) {
 		free(hfspath);
 		return -ENOENT;
 	}
-	
+
+	if (is_appledouble) {
+		free(hfspath);
+		return -ENOATTR;
+	}
 	
 	if (strcmp(name, XATTR_FINDERINFO_NAME) == 0) {
 		if (value == NULL) {
@@ -572,41 +1058,7 @@ static int FuseHFS_getxattr(const char *path, const char *name, char *value, siz
 			free(hfspath);
 			return -ERANGE;
 		}
-		// return finder info
-		if (ent.flags & HFS_ISDIR) {
-			// directory info
-			OSWriteBigInt16(value, 0, ent.u.dir.rect.top);
-			OSWriteBigInt16(value, 2, ent.u.dir.rect.left);
-			OSWriteBigInt16(value, 4, ent.u.dir.rect.bottom);
-			OSWriteBigInt16(value, 6, ent.u.dir.rect.right);
-			OSWriteBigInt16(value, 8, ent.fdflags);
-			OSWriteBigInt16(value, 10, ent.fdlocation.v);
-			OSWriteBigInt16(value, 12, ent.fdlocation.h);
-			OSWriteBigInt16(value, 14, ent.u.dir.view);
-			// DXInfo
-			OSWriteBigInt16(value, 16, ((DXInfo*)(ent.u.dir.xinfo))->frScroll.v);
-			OSWriteBigInt16(value, 18, ((DXInfo*)(ent.u.dir.xinfo))->frScroll.h);
-			OSWriteBigInt32(value, 20, ((DXInfo*)(ent.u.dir.xinfo))->frOpenChain);
-			OSWriteBigInt16(value, 24, ((DXInfo*)(ent.u.dir.xinfo))->frUnused);
-			OSWriteBigInt16(value, 26, ((DXInfo*)(ent.u.dir.xinfo))->frComment);
-			OSWriteBigInt32(value, 28, ((DXInfo*)(ent.u.dir.xinfo))->frPutAway);		
-		} else {
-			// file info
-			memcpy(value, ent.u.file.type, 4);
-			memcpy(value+4, ent.u.file.creator, 4);
-			OSWriteBigInt16(value, 8, ent.fdflags);
-			OSWriteBigInt16(value, 10, ent.fdlocation.v);
-			OSWriteBigInt16(value, 12, ent.fdlocation.h);
-			OSWriteBigInt16(value, 14, ent.u.file.window);
-			// FXInfo
-			OSWriteBigInt16(value, 16, ((FXInfo*)(ent.u.file.xinfo))->fdIconID);
-			OSWriteBigInt16(value, 18, ((FXInfo*)(ent.u.file.xinfo))->fdUnused[0]);
-			OSWriteBigInt16(value, 20, ((FXInfo*)(ent.u.file.xinfo))->fdUnused[1]);
-			OSWriteBigInt16(value, 22, ((FXInfo*)(ent.u.file.xinfo))->fdUnused[2]);
-			OSWriteBigInt16(value, 24, ((FXInfo*)(ent.u.file.xinfo))->fdUnused[3]);
-			OSWriteBigInt16(value, 26, ((FXInfo*)(ent.u.file.xinfo))->fdComment);
-			OSWriteBigInt32(value, 28, ((FXInfo*)(ent.u.file.xinfo))->fdPutAway);
-		}
+		make_finder_info(value, &ent);
 		free(hfspath);
 		return 32;
 	} else if (strcmp(name, XATTR_RESOURCEFORK_NAME) == 0 && (!(ent.flags & HFS_ISDIR)) && ent.u.file.rsize) {
@@ -644,9 +1096,15 @@ static int FuseHFS_setxattr(const char *path, const char *name, const char *valu
 	
 	// find file
 	hfsdirent ent;
-	if (hfs_stat(NULL, hfspath, &ent) == -1) {
+	int is_appledouble;
+	if (stat_hfs_or_appledouble(hfspath, &ent, &is_appledouble) == -1) {
 		free(hfspath);
 		return -ENOENT;
+	}
+
+	if (is_appledouble) {
+		free(hfspath);
+		return -ENOATTR;
 	}
 	
 	if (strcmp(name, XATTR_FINDERINFO_NAME) == 0) {
@@ -656,50 +1114,7 @@ static int FuseHFS_setxattr(const char *path, const char *name, const char *valu
 			return -ERANGE;
 		}
 		// write finder info to dirent
-		if (ent.flags & HFS_ISDIR) {
-			// directory
-			ent.u.dir.rect.top =		OSReadBigInt16(value, 0);
-			ent.u.dir.rect.left =		OSReadBigInt16(value, 2);
-			ent.u.dir.rect.bottom =		OSReadBigInt16(value, 4);
-			ent.u.dir.rect.right =		OSReadBigInt16(value, 6);
-			ent.fdflags =				OSReadBigInt16(value, 8);
-			ent.fdlocation.v =			OSReadBigInt16(value, 10);
-			ent.fdlocation.h =			OSReadBigInt16(value, 12);
-			ent.u.dir.view =			OSReadBigInt16(value, 14);
-			// DXInfo
-			((DXInfo*)(ent.u.dir.xinfo))->frScroll.v   = OSReadBigInt16(value, 16);
-			((DXInfo*)(ent.u.dir.xinfo))->frScroll.h   = OSReadBigInt16(value, 18);
-			((DXInfo*)(ent.u.dir.xinfo))->frOpenChain  = OSReadBigInt32(value, 20);
-			((DXInfo*)(ent.u.dir.xinfo))->frUnused     = OSReadBigInt16(value, 24);
-			((DXInfo*)(ent.u.dir.xinfo))->frComment    = OSReadBigInt16(value, 26);
-			((DXInfo*)(ent.u.dir.xinfo))->frPutAway    = OSReadBigInt32(value, 28);
-		} else {
-			// regular file
-			memcpy(ent.u.file.type, value, 4);
-			memcpy(ent.u.file.creator, value+4, 4);
-			ent.u.file.type[4] = ent.u.file.type[4] = '\0';
-			ent.fdflags       = OSReadBigInt16(value, 8);
-			ent.fdlocation.v  = OSReadBigInt16(value, 10);
-			ent.fdlocation.h  = OSReadBigInt16(value, 12);
-			ent.u.file.window = OSReadBigInt16(value, 14);
-			// FXInfo
-			((FXInfo*)(ent.u.file.xinfo))->fdIconID    = OSReadBigInt16(value, 16);
-			((FXInfo*)(ent.u.file.xinfo))->fdUnused[0] = OSReadBigInt16(value, 18);
-			((FXInfo*)(ent.u.file.xinfo))->fdUnused[1] = OSReadBigInt16(value, 20);
-			((FXInfo*)(ent.u.file.xinfo))->fdUnused[2] = OSReadBigInt16(value, 22);
-			((FXInfo*)(ent.u.file.xinfo))->fdUnused[3] = OSReadBigInt16(value, 24);
-			((FXInfo*)(ent.u.file.xinfo))->fdComment   = OSReadBigInt16(value, 26);
-			((FXInfo*)(ent.u.file.xinfo))->fdPutAway   = OSReadBigInt32(value, 28);
-			// bless parent folder if it's a system file
-			if ((strcmp(ent.u.file.type, "zsys") == 0) && (strcmp(ent.u.file.creator, "MACS") == 0) && (strcmp(ent.name, "System") == 0)) {
-				// bless
-				dprintf("setxattr: blessing folder %lu\n", ent.parid);
-				hfsvolent volent;
-				hfs_vstat(NULL, &volent);
-				volent.blessed = ent.parid;
-				hfs_vsetattr(NULL, &volent);
-			}
-		}
+		update_finderinfo(&ent, value);
 		// update file
 		hfs_setattr(NULL, hfspath, &ent);
 		free(hfspath);
@@ -735,11 +1150,17 @@ static int FuseHFS_removexattr(const char *path, const char *name) {
 	
 	// find file
 	hfsdirent ent;
-	if (hfs_stat(NULL, hfspath, &ent) == -1) {
+	int is_appledouble;
+	if (stat_hfs_or_appledouble(hfspath, &ent, &is_appledouble) == -1) {
 		free(hfspath);
 		return -ENOENT;
 	}
-	
+
+	if (is_appledouble) {
+		free(hfspath);
+		return -ENOATTR;
+	}
+
 	if (strcmp(name, XATTR_FINDERINFO_NAME) == 0) {
 		free(hfspath);
 		// not really removing it
@@ -769,7 +1190,7 @@ static int FuseHFS_chmod (const char *path, mode_t newmod) {
 	
 	// check that file exists
 	hfsdirent ent;
-	if (hfs_stat(NULL, hfspath, &ent) == -1) {
+	if (stat_hfs_or_appledouble(hfspath, &ent, NULL) == -1) {
 		free(hfspath);
 		return -ENOENT;
 	}
@@ -788,7 +1209,7 @@ static int FuseHFS_chown (const char *path, uid_t newuid, gid_t newgid) {
 	
 	// check that file exists
 	hfsdirent ent;
-	if (hfs_stat(NULL, hfspath, &ent) == -1) {
+	if (stat_hfs_or_appledouble(hfspath, &ent, NULL) == -1) {
 		free(hfspath);
 		perror("chown");
 		return -errno;
@@ -801,12 +1222,30 @@ static int FuseHFS_chown (const char *path, uid_t newuid, gid_t newgid) {
 static int FuseHFS_ftruncate (const char *path, off_t length, struct fuse_file_info *fi) {
 	dprintf("ftruncate %s %lu\n", path, length);
 	if (_readonly) return -EPERM;
-	
-	hfsfile *file = (hfsfile*)fi->fh;
-	if (hfs_truncate(file, length) == -1) {
-		perror("truncate");
-		return -errno;
+
+	struct hfs_or_appledouble_file *w = (struct hfs_or_appledouble_file *)fi->fh;
+	hfsfile *file = w->hfs;
+
+	if (!w->is_appledouble) {
+		if (hfs_truncate(file, length) == -1) {
+			perror("truncate");
+			return -errno;
+		}
+		return 0;
 	}
+
+	if (!w->appledouble)
+		w->appledouble = create_apple_double(file, &w->appledouble_size);
+	if (length <= w->appledouble_size) {
+		w->appledouble_size = length;
+		return 0;
+	}
+
+	uint8_t *t = realloc(w->appledouble, length);
+	if (!t)
+		return -ENOMEM;
+	w->appledouble = t;
+	w->appledouble_size = length;
 	return 0;
 }
 
@@ -820,6 +1259,28 @@ static int FuseHFS_truncate (const char *path, off_t length) {
 	
 	hfsfile *file = hfs_open(NULL, hfspath);
 	free(hfspath);
+	hfsdirent ent;
+	if (file == NULL && is_appledouble_prefix(hfspath) && (strip_appledoubleprefix_in_place(hfspath), hfs_stat(NULL, hfspath, &ent) == 0)) {
+		// Only resource fork can be truncated this way.
+		if (ent.u.file.rsize == 0)
+			return 0;
+		uint32_t appledouble_size = get_appledouble_len(&ent);
+		// Has no effect;
+		if (length >= appledouble_size)
+			return 0;
+		uint32_t pre_resfork = get_appledouble_len_before_resfork(&ent);
+		uint32_t new_ressize = length < pre_resfork ? 0 : pre_resfork - length;
+		if (new_ressize >= ent.u.file.rsize)
+			return 0;
+		// resource fork
+		hfsfile *fp = hfs_open(NULL, hfspath);
+		hfs_setfork(fp, 1);
+		hfs_seek(fp, new_ressize, SEEK_SET);
+		hfs_truncate(fp, new_ressize);
+		hfs_close(fp);
+		free(hfspath);
+		return 0;
+	}
 	if (file == NULL) return -errno;
 	if (hfs_truncate(file, length) == -1) {
 		hfs_close(file);
@@ -866,7 +1327,7 @@ static int FuseHFS_getxtimes(const char *path, struct timespec *bkuptime,
 	// get file info
 	hfsdirent ent;
 	
-	if (hfs_stat(NULL, hfspath, &ent) == 0) {
+	if (stat_hfs_or_appledouble(hfspath, &ent, NULL) == 0) {
 		// file
 		crtime->tv_sec = ent.crdate;
 		crtime->tv_nsec = 0;
@@ -892,9 +1353,12 @@ static int FuseHFS_setbkuptime (const char *path, const struct timespec *tv) {
 	
 	// get file info
 	hfsdirent ent;
-	
-	if (hfs_stat(NULL, hfspath, &ent) == 0) {
+
+	int is_appledouble;
+	if (stat_hfs_or_appledouble(hfspath, &ent, &is_appledouble) == 0) {
 		ent.bkdate = tv->tv_sec;
+		if (is_appledouble)
+			strip_appledoubleprefix_in_place(hfspath);
 		err = hfs_setattr(NULL, hfspath, &ent);
 		free(hfspath);
 		if (!err) return 0;
@@ -918,9 +1382,12 @@ static int FuseHFS_setchgtime (const char *path, const struct timespec *tv) {
 	
 	// get file info
 	hfsdirent ent;
-	
-	if (hfs_stat(NULL, hfspath, &ent) == 0) {
+
+	int is_appledouble;
+	if (stat_hfs_or_appledouble(hfspath, &ent, &is_appledouble) == 0) {
 		ent.mddate = tv->tv_sec;
+		if (is_appledouble)
+			strip_appledoubleprefix_in_place(hfspath);
 		err = hfs_setattr(NULL, hfspath, &ent);
 		free(hfspath);
 		if (!err) return 0;
@@ -944,9 +1411,11 @@ static int FuseHFS_setcrtime (const char *path, const struct timespec *tv) {
 	
 	// get file info
 	hfsdirent ent;
-	
-	if (hfs_stat(NULL, hfspath, &ent) == 0) {
+
+	if (stat_hfs_or_appledouble(hfspath, &ent, &is_appledouble) == 0) {
 		ent.crdate = tv->tv_sec;
+		if (is_appledouble)
+			strip_appledoubleprefix_in_place(hfspath);
 		err = hfs_setattr(NULL, hfspath, &ent);
 		free(hfspath);
 		if (!err) return 0;
