@@ -327,9 +327,12 @@ int hfs_vstat(hfsvol *vol, hfsvolent *ent)
 
   ent->flags     = (vol->flags & HFS_VOL_READONLY) ? HFS_ISLOCKED : 0;
 
-  ent->totbytes  = vol->mdb.drNmAlBlks * vol->mdb.drAlBlkSiz;
-  ent->freebytes = vol->mdb.drFreeBks  * vol->mdb.drAlBlkSiz;
+  ent->totbytes  = (unsigned long long)vol->mdb.drNmAlBlks * (unsigned long long)vol->mdb.drAlBlkSiz;
+  ent->freebytes = (unsigned long long)vol->mdb.drFreeBks  * (unsigned long long)vol->mdb.drAlBlkSiz;
 
+//    fprintf(stderr, "hfs_vstat(): ent->totbytes %llu\n", ent->totbytes);
+  //  fprintf(stderr, "hfs_vstat(): vol->mdb.drNmAlBlks * vol->mdb.drAlBlkSiz %llu\n", vol->mdb.drNmAlBlks * vol->mdb.drAlBlkSiz);
+    
   ent->alblocksz = vol->mdb.drAlBlkSiz;
   ent->clumpsz   = vol->mdb.drClpSiz;
 

@@ -35,8 +35,8 @@ typedef struct {
   char name[HFS_MAX_VLEN + 1];	/* name of volume (MacOS Standard Roman) */
   int flags;			/* volume flags */
 
-  unsigned long totbytes;	/* total bytes on volume */
-  unsigned long freebytes;	/* free bytes on volume */
+  unsigned long long totbytes;	/* total bytes on volume */
+  unsigned long long freebytes;	/* free bytes on volume */
 
   unsigned long alblocksz;	/* volume allocation block size */
   unsigned long clumpsz;	/* default file clump size */

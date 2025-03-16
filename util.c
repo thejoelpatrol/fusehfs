@@ -58,9 +58,15 @@ int probe (const char *device, int removable, int readonly) {
 		ret = FSUR_UNRECOGNIZED;
 	} else {
 		hfsvolent ent;
-		if (hfs_vstat(vol, &ent) == 0)
-            // WARNING!! apparently stdout is a pipe!!!
-			printf("%s\n", ent.name); // TODO: convert to UTF8
+        if (hfs_vstat(vol, &ent) == 0) {
+            fprintf(stderr, "fusefs_hfs.util: found volume %s\n", ent.name); // TODO: convert to UTF8
+            fprintf(stderr, "fusefs_hfs.util: ent.totbytes %llu\n", ent.totbytes);
+            fprintf(stderr, "fusefs_hfs.util: ent.freebytes %llu\n", ent.freebytes);
+            fprintf(stderr, "fusefs_hfs.util: vol->mdb.drNmAlBlks %u\n", vol->mdb.drNmAlBlks);
+            fprintf(stderr, "fusefs_hfs.util: vol->mdb.drAlBlkSiz %u\n", vol->mdb.drAlBlkSiz);
+            fprintf(stderr, "fusefs_hfs.util: vol->mdb.drFilCnt %u\n", vol->mdb.drFilCnt);
+            fprintf(stderr, "fusefs_hfs.util: vol->mdb.drDirCnt %u\n", vol->mdb.drDirCnt);
+        }
 	}
 	hfs_umount(vol);
 	return ret;
