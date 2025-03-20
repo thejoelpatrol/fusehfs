@@ -430,18 +430,72 @@ static int FuseHFS_write(const char *path, const char *buf, size_t size,
 	return (hfs_write(file, buf, size));
 }
 
+unsigned long power_of_2_factor(unsigned long blocksize) {
+    unsigned long bit = 0;
+    while ((blocksize & 1) == 0) {
+        blocksize = blocksize >> 1;
+        bit++;
+    }
+    return 1 << bit;
+}
+
+/* This is broken for any volume with block sizes other than powers of 2
+ because macFUSE rounds up blocksize to the nearest power of 2.
+ It will not be called by macFUSE on an actual Apple kernel if FuseHFS_statfs_x() is available.
+ If anyone on using open source Darwin complains...uh...do the lying math here too I guess.
+ FuseHFS_statfs_x() is preferred because it's a little easier to work with struct statfs
+ instead of struct statvfs to get the size right, but it's probably possible here too if we're
+ careful about how big the fields actually are. I'm just lazy and leaving this note instead. */
 static int FuseHFS_statfs(const char *path, struct statvfs *stbuf) {
-	memset(stbuf, 0, sizeof(*stbuf));
+    fprintf(stderr, "FuseHFS_statfs()\n");
+	memset(stbuf, 0, sizeof(struct statvfs));
 	hfsvolent vstat;
 	hfs_vstat(NULL, &vstat);
 	
 	stbuf->f_bsize = stbuf->f_frsize = vstat.alblocksz;
 	stbuf->f_blocks = vstat.totbytes / vstat.alblocksz;
-	stbuf->f_bfree = stbuf->f_bavail = vstat.freebytes / vstat.alblocksz;
-	 
+    stbuf->f_bfree = stbuf->f_bavail = vstat.freebytes / vstat.alblocksz;
 	stbuf->f_files = vstat.numfiles + vstat.numdirs + 1;
 	stbuf->f_namemax = HFS_MAX_FLEN;
-	return 0;
+	
+#if DEBUG
+        fprintf(stderr, "FuseHFS_statfs(): vstat.totbytes %llu\n", vstat.totbytes);
+        fprintf(stderr, "FuseHFS_statfs(): vstat.alblocksz %lu\n", vstat.alblocksz);
+        fprintf(stderr, "FuseHFS_statfs(): stbuf->f_bsize %lu\n", stbuf->f_bsize);
+        fprintf(stderr, "FuseHFS_statfs(): stbuf->f_frsize %lu\n", stbuf->f_frsize);
+        fprintf(stderr, "FuseHFS_statfs(): stbuf->f_blocks %hu\n", stbuf->f_blocks);
+        fprintf(stderr, "FuseHFS_statfs(): stbuf->f_bfree %hu\n", stbuf->f_bfree);
+#endif
+    
+    return 0;
+}
+
+
+static int FuseHFS_statfs_x(const char *path, struct statfs *stbuf) {
+    fprintf(stderr, "FuseHFS_statfs_x()\n");
+    memset(stbuf, 0, sizeof(struct statvfs));
+    hfsvolent vstat;
+    hfs_vstat(NULL, &vstat);
+    
+    /* We lie about the actual block size the filesystem really encodes because macFUSE rounds it up to the nearest
+     power of 2 anyway, resulting in total and free space errors when the block size is not actually a power of 2.
+     This is especially exaggerated on large volumes, but would often be wrong for small ones too. */
+    unsigned long blocksize_power_of_2 = power_of_2_factor(vstat.alblocksz);
+    unsigned long blocksize_multiple = vstat.alblocksz / blocksize_power_of_2;
+    stbuf->f_bsize = blocksize_power_of_2;
+    stbuf->f_blocks = blocksize_multiple * (vstat.totbytes / vstat.alblocksz);
+    stbuf->f_bfree = stbuf->f_bavail = blocksize_multiple * (vstat.freebytes / vstat.alblocksz);
+    stbuf->f_files = vstat.numfiles + vstat.numdirs + 1;
+    
+    fprintf(stderr, "FuseHFS_statfs(): vstat.totbytes %llu\n", vstat.totbytes);
+    fprintf(stderr, "FuseHFS_statfs(): vstat.freebytes %llu\n", vstat.freebytes);
+    fprintf(stderr, "FuseHFS_statfs(): vstat.alblocksz %lu\n", vstat.alblocksz);
+    fprintf(stderr, "FuseHFS_statfs_x(): stbuf->f_bsize %u\n", stbuf->f_bsize);
+    fprintf(stderr, "FuseHFS_statfs_x(): stbuf->f_blocks %llu\n", stbuf->f_blocks);
+    fprintf(stderr, "FuseHFS_statfs_x(): stbuf->f_bfree %llu\n", stbuf->f_bfree);
+    fprintf(stderr, "FuseHFS_statfs_x(): stbuf->f_files %llu\n", stbuf->f_files);
+    
+    return 0;
 }
 
 static int FuseHFS_flush(const char *path, struct fuse_file_info *fi) {
@@ -475,9 +529,6 @@ void * FuseHFS_init(struct fuse_conn_info *conn) {
 	log_to_file();
 	
 #ifdef DEBUG
-	//char logfn[128];
-	//sprintf(logfn, "/fusefs_hfs/FuseHFS.%d.log", getpid());
-	//stderr = freopen(logfn, "a", stderr);
 	fprintf(stderr, "FuseHFS_init\n");
 	fflush(stderr);
 #endif
@@ -977,6 +1028,7 @@ struct fuse_operations FuseHFS_operations = {
 	.read        = FuseHFS_read,
 	.write       = FuseHFS_write,
 	.statfs      = FuseHFS_statfs,
+    .statfs_x    = FuseHFS_statfs_x,
 	//.flush       = FuseHFS_flush,
 	.release     = FuseHFS_release,
 	//.fsync       = FuseHFS_fsync,
