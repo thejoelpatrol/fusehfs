@@ -968,7 +968,8 @@ unsigned long hfs_write(hfsfile *file, const void *buf, unsigned long len)
       if (file->pos > *lglen)
 	*lglen = file->pos;
     }
-
+  
+    f_flush(file);
   return len;
 
 fail:
