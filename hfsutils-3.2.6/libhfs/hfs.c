@@ -999,6 +999,7 @@ int hfs_truncate(hfsfile *file, unsigned long len)
       if (file->pos > len)
 	file->pos = len;
     }
+    f_flush(file);
 
   return 0;
 
