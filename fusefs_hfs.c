@@ -41,7 +41,7 @@
 #define FILENAME "[fusefs_hfs.c]\t"
 
 #ifdef DEBUG
-#define dprintf(args...) printf(args)
+#define dprintf(args...) fprintf(stderr, args)
 #else
 #define dprintf(fmt, args...)
 #endif
@@ -146,10 +146,12 @@ static int dirent_to_stbuf(const hfsdirent *ent, struct stat *stbuf) {
 static int FuseHFS_fgetattr(const char *path, struct stat *stbuf,
                   struct fuse_file_info *fi) {
 	hfsdirent ent;
-	
+	    
 	if (fi && (hfs_fstat((hfsfile*)fi->fh, &ent) == 0)) {
 		// open file
 		dirent_to_stbuf(&ent, stbuf);
+        fprintf(stderr, "FuseHFS_fgetattr(): [%llx] %s \n", fi->fh, path);
+        fprintf(stderr, "stbuf->st_size: %llu, \n", stbuf->st_size);
 		return 0;
 	}
 	
@@ -162,6 +164,8 @@ static int FuseHFS_fgetattr(const char *path, struct stat *stbuf,
 	if (hfs_stat(NULL, hfspath, &ent) == 0) {
 		// file
 		dirent_to_stbuf(&ent, stbuf);
+        fprintf(stderr, "FuseHFS_fgetattr(): [%d] %s \n", 0, path);
+        fprintf(stderr, "stbuf->st_size: %llu, \n", stbuf->st_size);
 		free(hfspath);
 		return 0;
 	}
@@ -416,7 +420,9 @@ static int FuseHFS_read(const char *path, char *buf, size_t size, off_t offset,
 	hfsfile *file = (hfsfile*)fi->fh;
 	hfs_setfork(file, 0);
 	hfs_seek(file, offset, SEEK_SET);
-	return hfs_read(file, buf, size);
+    int read = hfs_read(file, buf, size);
+    fprintf(stderr, "FuseHFS_read(): [%llx] %s returning %d bytes \n", fi->fh, path, read);
+	return read;
 }
 
 static int FuseHFS_write(const char *path, const char *buf, size_t size,
@@ -424,6 +430,9 @@ static int FuseHFS_write(const char *path, const char *buf, size_t size,
 	dprintf("write %s\n", path);
 	if (_readonly) return -EPERM;
 	
+    fprintf(stderr, "FuseHFS_write() file %s (%llx) %lu at offset %llu data: %x%x%x%x \n", path, (unsigned long long)fi->fh, size, offset, buf[0], buf[1], buf[2], buf[3]);
+    fflush(stderr);
+    
 	hfsfile *file = (hfsfile*)fi->fh;
 	hfs_setfork(file, 0);
 	hfs_seek(file, offset, SEEK_SET);
@@ -458,21 +467,20 @@ static int FuseHFS_statfs(const char *path, struct statvfs *stbuf) {
 	stbuf->f_files = vstat.numfiles + vstat.numdirs + 1;
 	stbuf->f_namemax = HFS_MAX_FLEN;
 	
-#if DEBUG
-        fprintf(stderr, "FuseHFS_statfs(): vstat.totbytes %llu\n", vstat.totbytes);
-        fprintf(stderr, "FuseHFS_statfs(): vstat.alblocksz %lu\n", vstat.alblocksz);
-        fprintf(stderr, "FuseHFS_statfs(): stbuf->f_bsize %lu\n", stbuf->f_bsize);
-        fprintf(stderr, "FuseHFS_statfs(): stbuf->f_frsize %lu\n", stbuf->f_frsize);
-        fprintf(stderr, "FuseHFS_statfs(): stbuf->f_blocks %hu\n", stbuf->f_blocks);
-        fprintf(stderr, "FuseHFS_statfs(): stbuf->f_bfree %hu\n", stbuf->f_bfree);
-#endif
+
+    dprintf("FuseHFS_statfs(): vstat.totbytes %llu\n", vstat.totbytes);
+    dprintf("FuseHFS_statfs(): vstat.alblocksz %lu\n", vstat.alblocksz);
+    dprintf("FuseHFS_statfs(): stbuf->f_bsize %lu\n", stbuf->f_bsize);
+    dprintf("FuseHFS_statfs(): stbuf->f_frsize %lu\n", stbuf->f_frsize);
+    dprintf("FuseHFS_statfs(): stbuf->f_blocks %hu\n", stbuf->f_blocks);
+    dprintf("FuseHFS_statfs(): stbuf->f_bfree %hu\n", stbuf->f_bfree);
     
     return 0;
 }
 
 
 static int FuseHFS_statfs_x(const char *path, struct statfs *stbuf) {
-    fprintf(stderr, "FuseHFS_statfs_x()\n");
+    dprintf("FuseHFS_statfs_x()\n");
     memset(stbuf, 0, sizeof(struct statvfs));
     hfsvolent vstat;
     hfs_vstat(NULL, &vstat);
@@ -486,14 +494,14 @@ static int FuseHFS_statfs_x(const char *path, struct statfs *stbuf) {
     stbuf->f_blocks = blocksize_multiple * (vstat.totbytes / vstat.alblocksz);
     stbuf->f_bfree = stbuf->f_bavail = blocksize_multiple * (vstat.freebytes / vstat.alblocksz);
     stbuf->f_files = vstat.numfiles + vstat.numdirs + 1;
-    
-    fprintf(stderr, "FuseHFS_statfs(): vstat.totbytes %llu\n", vstat.totbytes);
-    fprintf(stderr, "FuseHFS_statfs(): vstat.freebytes %llu\n", vstat.freebytes);
-    fprintf(stderr, "FuseHFS_statfs(): vstat.alblocksz %lu\n", vstat.alblocksz);
-    fprintf(stderr, "FuseHFS_statfs_x(): stbuf->f_bsize %u\n", stbuf->f_bsize);
-    fprintf(stderr, "FuseHFS_statfs_x(): stbuf->f_blocks %llu\n", stbuf->f_blocks);
-    fprintf(stderr, "FuseHFS_statfs_x(): stbuf->f_bfree %llu\n", stbuf->f_bfree);
-    fprintf(stderr, "FuseHFS_statfs_x(): stbuf->f_files %llu\n", stbuf->f_files);
+
+    dprintf("FuseHFS_statfs(): vstat.totbytes %llu\n", vstat.totbytes);
+    dprintf("FuseHFS_statfs(): vstat.freebytes %llu\n", vstat.freebytes);
+    dprintf("FuseHFS_statfs(): vstat.alblocksz %lu\n", vstat.alblocksz);
+    dprintf("FuseHFS_statfs_x(): stbuf->f_bsize %u\n", stbuf->f_bsize);
+    dprintf("FuseHFS_statfs_x(): stbuf->f_blocks %llu\n", stbuf->f_blocks);
+    dprintf("FuseHFS_statfs_x(): stbuf->f_bfree %llu\n", stbuf->f_bfree);
+    dprintf("FuseHFS_statfs_x(): stbuf->f_files %llu\n", stbuf->f_files);
     
     return 0;
 }
@@ -528,10 +536,8 @@ void * FuseHFS_init(struct fuse_conn_info *conn) {
 
 	log_to_file();
 	
-#ifdef DEBUG
-	fprintf(stderr, "FuseHFS_init\n");
+	dprintf("FuseHFS_init\n");
 	fflush(stderr);
-#endif
 	
 	// create iconv
 	iconv_to_utf8 = iconv_open("UTF-8", options->encoding);
@@ -877,7 +883,7 @@ static int FuseHFS_truncate (const char *path, off_t length) {
 		hfs_close(file);
 		perror("truncate");
 		return -errno;
-	}
+	}    
 	hfs_close(file);
 	return 0;
 }
