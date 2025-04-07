@@ -66,6 +66,7 @@ int probe (const char *device, int removable, int readonly) {
             fprintf(stderr, "fusefs_hfs.util: vol->mdb.drAlBlkSiz %u\n", vol->mdb.drAlBlkSiz);
             fprintf(stderr, "fusefs_hfs.util: vol->mdb.drFilCnt %u\n", vol->mdb.drFilCnt);
             fprintf(stderr, "fusefs_hfs.util: vol->mdb.drDirCnt %u\n", vol->mdb.drDirCnt);
+            fprintf(stderr, "fusefs_hfs.util: vol->mdb.drFndrInfo[4] %u\n", vol->mdb.drFndrInfo[4]);
         }
 	}
 	hfs_umount(vol);
