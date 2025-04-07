@@ -8,6 +8,8 @@
  *  Licensed under GPLv2: https://www.gnu.org/licenses/gpl-2.0.html
  */
 
+#define MAX_FILE_SIZE 0x7FFFFFFF
+
 struct fusehfs_options {
     char    *path;
     char	*encoding;

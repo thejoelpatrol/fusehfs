@@ -421,21 +421,25 @@ static int FuseHFS_read(const char *path, char *buf, size_t size, off_t offset,
 	hfs_setfork(file, 0);
 	hfs_seek(file, offset, SEEK_SET);
     int read = hfs_read(file, buf, size);
-    fprintf(stderr, "FuseHFS_read(): [%llx] %s returning %d bytes \n", fi->fh, path, read);
+    dprintf("FuseHFS_read(): [%llx] %s returning %d bytes \n", fi->fh, path, read);
 	return read;
 }
 
 static int FuseHFS_write(const char *path, const char *buf, size_t size,
                off_t offset, struct fuse_file_info *fi) {
 	dprintf("write %s\n", path);
-	if (_readonly) return -EPERM;
+    if (_readonly)
+        return -EPERM;
+    if (offset + size > MAX_FILE_SIZE)
+        return -EFBIG;
 	
-    fprintf(stderr, "FuseHFS_write() file %s (%llx) %lu at offset %llu data: %x%x%x%x \n", path, (unsigned long long)fi->fh, size, offset, buf[0], buf[1], buf[2], buf[3]);
+    dprintf("FuseHFS_write() file %s (%llx) %lu at offset %llu data: %x%x%x%x \n", path, (unsigned long long)fi->fh, size, offset, buf[0], buf[1], buf[2], buf[3]);
     fflush(stderr);
     
 	hfsfile *file = (hfsfile*)fi->fh;
 	hfs_setfork(file, 0);
-	hfs_seek(file, offset, SEEK_SET);
+    if (hfs_seek(file, offset, SEEK_SET) < 0)
+        return -EINVAL;
 	return (hfs_write(file, buf, size));
 }
 
@@ -451,7 +455,7 @@ unsigned long power_of_2_factor(unsigned long blocksize) {
 /* This is broken for any volume with block sizes other than powers of 2
  because macFUSE rounds up blocksize to the nearest power of 2.
  It will not be called by macFUSE on an actual Apple kernel if FuseHFS_statfs_x() is available.
- If anyone on using open source Darwin complains...uh...do the lying math here too I guess.
+ If anyone using open source Darwin complains...uh...do the lying math here too I guess.
  FuseHFS_statfs_x() is preferred because it's a little easier to work with struct statfs
  instead of struct statvfs to get the size right, but it's probably possible here too if we're
  careful about how big the fields actually are. I'm just lazy and leaving this note instead. */
