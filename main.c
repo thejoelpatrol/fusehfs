@@ -53,6 +53,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <iconv.h>
+#include <stdlib.h>
 #include <libhfs/hfs.h>
 
 #include "log.h"
@@ -67,7 +68,8 @@ extern struct fuse_operations FuseHFS_operations;
 struct fusehfs_options options = {
     .path =         NULL,
     .encoding =		NULL,
-	.readonly =		0
+    .readonly =		0,
+    .partition = 0,
 };
 
 enum {
@@ -75,6 +77,7 @@ enum {
 	KEY_HELP,
 	KEY_ENCODING,
 	KEY_READONLY,
+	KEY_PARTITION,
 };
 
 static struct fuse_opt FuseHFS_opts[] = {
@@ -84,6 +87,7 @@ static struct fuse_opt FuseHFS_opts[] = {
 	FUSE_OPT_KEY("--help",		KEY_HELP),
 	FUSE_OPT_KEY("--encoding=",	KEY_ENCODING),
 	FUSE_OPT_KEY("--readonly",	KEY_READONLY),
+	FUSE_OPT_KEY("--partition=",	KEY_PARTITION),
 	FUSE_OPT_END
 };
 
@@ -122,6 +126,9 @@ static int FuseHFS_opt_proc(void *data, const char *arg, int key, struct fuse_ar
 			exit(0);
 		case KEY_READONLY:
 			options.readonly = 1;
+			return 0;
+		case KEY_PARTITION:
+			options.partition = strtoul(arg+12, 0, 0);
 			return 0;
 	}
 	return 0;
@@ -173,7 +180,7 @@ int main(int argc, char* argv[], char* envp[], char** exec_path) {
 	// mount volume
 	hfsvolent vstat;
 	int mode = options.readonly?HFS_MODE_RDONLY:HFS_MODE_ANY;
-	if (NULL == hfs_mount(options.path, 0, mode)) {
+	if (NULL == hfs_mount(options.path, options.partition, mode)) {
 		perror("hfs_mount");
 		return 1;
 	}
